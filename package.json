@@ -1,0 +1,29 @@
+{
+  "name": "ruhs",
+  "version": "0.0.1",
+  "description": "A performance-based Discord API wrapper for Node.",
+  "main": "./src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/acarnd03/ruhs.git"
+  },
+  "author": {
+    "name": "acarnd03",
+    "email": "acarnd03@gmail.com"
+  },
+  "keywords": [
+    "ruhs",
+    "discord-api",
+    "node"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/acarnd03/ruhs/issues"
+  },
+  "homepage": "https://github.com/acarnd03/ruhs#readme",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "erlpack": "^0.1.3",
+    "ws": "^7.3.1"
+  }
+}
