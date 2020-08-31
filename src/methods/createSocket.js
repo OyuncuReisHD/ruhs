@@ -9,12 +9,12 @@ const createGuild = require("./createGuild.js");
 let erlpack, zlib;
 let ping = 0;
 
-const createSocket = (async (token, wsOptions) => {
+const createSocket = (async (token, clientOptions) => {
   const options = Object.assign({}, ({
     "version": 6,
     "encoding": "json",
     "compress": false
-  }), wsOptions);
+  }), (clientOptions.ws || {}));
 
   if(options.encoding === "etf") {
     try {
@@ -92,9 +92,9 @@ const createSocket = (async (token, wsOptions) => {
         "d": {
           "token": token,
           "properties": {
-            "$os": process.platorm,
-            "$browser": "ruhs",
-            "$device": "ruhs"
+            "os": process.platorm,
+            "browser": "ruhs",
+            "device": "ruhs"
           }
         }
       };
@@ -117,8 +117,8 @@ const createSocket = (async (token, wsOptions) => {
         "DIRECT_MESSAGE_TYPING": 1 << 14
       };
 
-      if(options.intents && (options.intents.length !== 0)) {
-        identifyData.intents = options.intents.map((intent) => Intents[intent]).reduce((bits, next) => bits | next, 0);
+      if(clientOptions.intents && (clientOptions.intents.length !== 0)) {
+        identifyData.intents = clientOptions.intents.map((intent) => Intents[intent]).reduce((bits, next) => bits | next, 0);
       }
 
       ws.send(pack(identifyData));
