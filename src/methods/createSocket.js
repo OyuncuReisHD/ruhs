@@ -6,7 +6,7 @@ const Collection = require("../utils/Collection.js");
 
 const createGuild = require("./createGuild.js");
 
-let erlpack;
+let erlpack, zlib;
 let ping = 0;
 
 const createSocket = (async (token, wsOptions) => {
@@ -24,9 +24,18 @@ const createSocket = (async (token, wsOptions) => {
     }
   }
 
+  if (options.compress) {
+    try {
+      zlib = require("zlib-sync");
+    } catch(error) {
+      throw new Error("When 'compress' websocket option is true, 'zlib-sync' node package must be installed.");
+    }
+  }
+
   let gatewayURL = await Axios.get("https://discord.com/api/gateway");
   gatewayURL = gatewayURL.data.url;
   gatewayURL = gatewayURL.endsWith("/") ? gatewayURL : (gatewayURL + "/");
+  console.log(gatewayURL);
 
   let heartbeatInterval = 0;
   let lastSequence = null;
@@ -38,8 +47,35 @@ const createSocket = (async (token, wsOptions) => {
     return erlpack.unpack(Buffer.from(new Uint8Array(data)));
   }) : JSON.parse;
 
+  let inflator;
+
+  if(options.compress) {
+    inflator = new zlib.Inflate({
+      chunkSize: 65535,
+      flush: zlib.Z_SYNC_FLUSH,
+      to: options.encoding === "json" ? "string" : ""
+    });
+  }
+
   ws.on("message", async (data) => {
-    let wsData = unpack(data);
+    let wsData;
+
+    if(options.compress) {
+      const len = data.length;
+      const flush = (len > 4) &&
+        (data[len - 4] === 0x00) &&
+        (data[len - 3] === 0x00) &&
+        (data[len - 2] === 0xff) &&
+        (data[len - 1] === 0xff);
+
+      inflator.push(data, flush && zlib.Z_SYNC_FLUSH);
+
+      if(!flush) return;
+
+      wsData = unpack(inflator.result);
+    } else {
+      wsData = unpack(data);
+    }
 
     if(wsData.op === 10) {
       hearbeatInterval = wsData.hearbeat_interval;
@@ -51,17 +87,41 @@ const createSocket = (async (token, wsOptions) => {
         }));
       }, heartbeatInterval);
 
-      ws.send(pack({
+      const identifyData {
         "op": 2,
         "d": {
           "token": token,
           "properties": {
-            "$os": "win32",
+            "$os": process.platorm,
             "$browser": "ruhs",
             "$device": "ruhs"
           }
         }
-      }));
+      };
+
+      const Intents = {
+        "GUILDS": 1 << 0,
+        "GUILD_MEMBERS": 1 << 1,
+        "GUILD_BANS": 1 << 2,
+        "GUILD_EMOJIS": 1 << 3,
+        "GUILD_INTEGRATIONS": 1 << 4,
+        "GUILD_WEBHOOKS": 1 << 5,
+        "GUILD_INVITES": 1 << 6,
+        "GUILD_VOICE_STATES": 1 << 7,
+        "GUILD_PRESENCES": 1 << 8,
+        "GUILD_MESSAGES": 1 << 9,
+        "GUILD_MESSAGE_REACTIONS": 1 << 10,
+        "GUILD_MESSAGE_TYPING": 1 << 11,
+        "DIRECT_MESSAGES": 1 << 12,
+        "DIRECT_MESSAGE_REACTIONS": 1 << 13,
+        "DIRECT_MESSAGE_TYPING": 1 << 14
+      };
+
+      if(options.intents && (options.intents.length !== 0)) {
+        identifyData.intents = options.intents.map((intent) => Intents[intent]).reduce((bits, next) => bits | next, 0);
+      }
+
+      ws.send(pack(identifyData));
     } else if(wsData.op === 0) {
       if(eventHandlers.rawWS) {
         await eventHandlers.rawWS(wsData);
@@ -74,7 +134,25 @@ const createSocket = (async (token, wsOptions) => {
           eventHandlers.ready();
         }
       } else if(wsData.t === "GUILD_CREATE") {
+        const guild = createGuild(wsData.d);
+
         cache.guilds.set(wsData.d.id, createGuild(wsData.d));
+
+        if(eventHandlers.guildCreate) {
+          eventHandlers.guildCreate(guild);
+        }
+      } else if(wsData.t === "GUILD_MEMBER_ADD") {
+        const guild = cache.guilds.get(wsData.d.guild_id);
+        const member = createMember(wsData.d.member);
+
+        guild.members.set(wsData.d.member.user.id, member);
+        guild.memberCount += 1;
+
+        cache.guilds.set(wsData.d.guild_id, member);
+
+        if(eventHandlers.guildMemberAdd) {
+          eventHandlers.guildMemberAdd(member, guild);
+        }
       }
     }
   });

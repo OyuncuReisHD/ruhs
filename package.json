@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A performance-based Discord API wrapper for Node.",
   "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git://github.com/acarnd03/ruhs.git"

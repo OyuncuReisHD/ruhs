@@ -1,6 +1,8 @@
+const Collection = require("./utils/Collection.js");
+
 const cache = ({
-  "guilds": {},
-  "channels": {}
+  "guilds": Collection(),
+  "channels": Collection()
 });
 
 const eventHandlers = ({});
