@@ -1,4 +1,4 @@
-const Collection = ((collectionData, key) => {
+const Collection = ((collectionData = [], key) => {
   const data = collectionData.map((d, i) => [key ? d[key] : i, d]);
   const base = {};
 

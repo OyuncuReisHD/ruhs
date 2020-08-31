@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 const Axios = require("axios");
 
-const {eventHandlers, cache, setBotUser} = require("../botProperties.js");
+const {eventHandlers, cache} = require("../botProperties.js");
 const Collection = require("../utils/Collection.js");
 
 const createGuild = require("./createGuild.js");
@@ -87,7 +87,7 @@ const createSocket = (async (token, clientOptions) => {
         }));
       }, heartbeatInterval);
 
-      const identifyData {
+      const identifyData = {
         "op": 2,
         "d": {
           "token": token,
