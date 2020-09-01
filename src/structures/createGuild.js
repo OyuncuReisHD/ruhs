@@ -1,4 +1,5 @@
 const createMember = require("./createMember.js");
+const createRole = require("./createRole.js");
 
 const Collection = require("../utils/Collection.js");
 const request = require("../utils/request.js");
@@ -12,18 +13,40 @@ const createGuild = (async(guildData, token) => {
   guild.id = guildData.id;
   guild.name = guildData.name;
 
-  guild.icon = guildData.icon; // hash
-  guild.splash = guildData.splash; // hash
-  guild.discoverySplash = guildData.discovery_splash; // hash
+  guild.getIcon = (() => {
+    if(guildData.icon && guildData.icon.startsWith("a_")) {
+      return "https://cdn.discordapp.com/icons/" + guild.id + "/" + guildData.icon.slice(2) + ".gif";
+    } else if(guildData.icon) {
+      return "https://cdn.discordapp.com/icons/" + guild.id + "/" + guildData.icon + ".png";
+    } else {
+      return null;
+    }
+  });
 
-  if(guild.members.has(guildData.owner_id)) {
+  guild.getSplash = (() => {
+    if(guildData.splash) {
+      return "https://cdn.discordapp.com/splashes/" + guild.id + "/" + guildData.splash + ".png";
+    } else {
+      return null;
+    }
+  });
+
+  guild.getDiscoverySplash = (() => {
+    if(guildData.discovery_splash) {
+      return "https://cdn.discordapp.com/discovery-splashes/" + guild.id + "/" + guildData.discovery_splash + ".png";
+    } else {
+      return null;
+    }
+  });
+
+  if(members.has(guildData.owner_id)) {
     guild.owner = members.get(guildData.owner_id);
   } else {
     const ownerMember = await request("GET", "/guilds/" + guild.id + "/members/" + guildData.owner_id, token);
   
     members.set(guildData.owner_id, ownerMember);
   
-    guild.owner = guild.members.get(guildData.owner_id, ownerMember);
+    guild.owner = members.get(guildData.owner_id, ownerMember);
   }
 
   // permissions
@@ -38,7 +61,7 @@ const createGuild = (async(guildData, token) => {
   guild.verificationLevel = guildData.verification_level;
   guild.defaultMessageNotifications = guildData.default_message_notifications;
   guild.explicitContentFilter = guildData.explicit_content_filter;
-  guild.roles = guildData.roles; // roles structure
+  guild.roles = Collection(guildData.roles.map((roleData) => createRole(roleData)), "owner_id");
   guild.emojis = guildData.emojis; // emoji structure
   guild.features = guildData.features;
   guild.mfaLevel = guildData.mfa_level;
@@ -68,15 +91,15 @@ const createGuild = (async(guildData, token) => {
     cache.channels.set(guildData.channels[i].id, guildData.channels[i]);
   }
 
-  guild.presences = guildData.presences; // idk
+  guild.presences = guildData.presences; // presence structure
 
   if(guildData.max_presences) {
     guild.maxPresences = guild.max_presences;
   }
 
-  // max_members?, vanity_url_code, description, banner, premium_tier, premium_subscription_count?, preferred_locale, public_updates_channel_id?, max_video_channel_users?, approximate_member_count?, approximate_presence_count?
-
-  guild.max_members
+  if(guildData.max_members) {
+    guild.maxMembers = guildData.max_members;
+  }
 
   if(guildData.vanity_url_code) {
     guild.vanityCode = guildData.vanity_url_code;
@@ -86,9 +109,13 @@ const createGuild = (async(guildData, token) => {
     guild.description = guildData.description;
   }
 
-  if(guildData.banner) {
-    guild.banner = guildData.banner; // hash
-  }
+  guild.getBanner = (() => {
+    if(guildData.banner) {
+      return "https://cdn.discordapp.com/banners/" + guild.id + "/" + guildData.banner + ".png";
+    } else {
+      return null;
+    }
+  });
 
   guild.premiumTier = guildData.premium_tier;
 

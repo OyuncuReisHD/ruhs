@@ -5,10 +5,14 @@ const createMember = ((memberData) => {
 
   member.id = memberData.user.id;
   member.user = createUser(memberData.user);
-  member.nick = memberData.nick;
+  member.nick = memberData.nick || null;
   member.roles = memberData.roles;
-  member.joinedAt = memberData.joined_at ? new Date(memberData.joined_at) : undefined;
-  member.premiumSince = memberData.premium_since ? new Date(memberData.premium_since) : undefined;
+  member.joinedAt = new Date(memberData.joined_at);
+
+  if(memberData.premium_since) {
+    member.premiumSince = new Date(memberData.premium_since);
+  }
+
   member.deaf = memberData.deaf;
   member.mute = memberData.mute;
 

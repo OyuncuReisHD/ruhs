@@ -7,7 +7,7 @@ const createUser = ((userData) => {
   user.tag = userData.username + "#" + userData.discriminator;
   user.getAvatar = (() => {
     if(userData.avatar && userData.avatar.startsWith("a_")) {
-      return "https://cdn.discordapp.com/avatars/" + userData.id + "/" + userData.avatar.slice(1) + ".gif";
+      return "https://cdn.discordapp.com/avatars/" + userData.id + "/" + userData.avatar.slice(2) + ".gif";
     } else if(userData.avatar) {
       return "https://cdn.discordapp.com/avatars/" + userData.id + "/" + userData.avatar + ".png";
     } else {
