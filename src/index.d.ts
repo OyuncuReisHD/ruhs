@@ -1,4 +1,11 @@
 declare namespace Ruhs {
+  type Intent =
+    "GUILDS" | "GUILD_MEMBERS" | "GUILD_BANS" |
+    "GUILD_EMOJIS" | "GUILD_INTEGRATIONS" | "GUILD_WEBHOOKS" |
+    "GUILD_INVITES" | "GUILD_VOICE_STATES" | "GUILD_PRESENCES" |
+    "GUILD_MESSAGES" | "GUILD_MESSAGE_REACTIONS" | "GUILD_MESSAGE_TYPING" |
+    "DIRECT_MESSAGES" | "DIRECT_MESSAGE_REACTIONS" | "DIRECT_MESSAGE_TYPING";
+
   interface User {
     id: string;
     username: string;
@@ -95,17 +102,17 @@ declare namespace Ruhs {
   }
 
   interface ClientOptions {
-    ws?: {
+    ws?: ({
       version?: number;
-      encoding?: "json" | "etf",
-      compress?: boolean
-    }
+      encoding?: "json" | "etf";
+      compress?: boolean;
+    });
+    intents?: Intent[];
   }
 
-
   const Collection: CollectionType<any>;
+
   const createClient: ((token: string, options: ClientOptions) => Promise<void>);
-  const ping: number;
   const cache: ({
     guilds: ReturnType<CollectionType<Guild>>,
     channels: ReturnType<CollectionType<Channel>>
