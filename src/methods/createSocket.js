@@ -4,11 +4,10 @@ const Axios = require("axios");
 const {eventHandlers, cache} = require("../botProperties.js");
 const Collection = require("../utils/Collection.js");
 
-const createGuild = require("./createGuild.js");
-const createMember = require("./createMember.js");
+const createGuild = require("../structures/createGuild.js");
+const createMember = require("../structures/createMember.js");
 
 let erlpack, zlib;
-let ping = 0;
 
 const createSocket = (async (token, clientOptions) => {
   const options = Object.assign({}, ({
@@ -35,11 +34,10 @@ const createSocket = (async (token, clientOptions) => {
 
   let gatewayURL = await Axios.get("https://discord.com/api/gateway");
   gatewayURL = gatewayURL.data.url;
-  gatewayURL = gatewayURL.endsWith("/") ? gatewayURL : (gatewayURL + "/");
+  gatewayURL = gatewayURL + "/";
 
   let heartbeatInterval = 0;
   let lastSequence = null;
-  let lastPingLatency = null;
 
   const ws = new WebSocket(gatewayURL + "?" + ("v=" + options.version) + "&" + ("encoding=" + options.encoding) + (options.compress ? "&compress=zlib-stream" : ""));
   const pack = options.encoding === "etf" ? erlpack.pack : JSON.stringify;
@@ -161,4 +159,4 @@ const createSocket = (async (token, clientOptions) => {
   });
 });
 
-module.exports = {createSocket, ping};
+module.exports = createSocket;
