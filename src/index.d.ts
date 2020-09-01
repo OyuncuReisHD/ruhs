@@ -10,6 +10,7 @@ declare namespace Ruhs {
   }
 
   interface Member {
+    id: string;
     user: User;
     nick: string | undefined;
     roles: string[],
@@ -26,9 +27,12 @@ declare namespace Ruhs {
   });
 
   interface Guild {
+    id: string;
     name: string;
-    channels: ReturnType<CollectionType<Channel>>,
-    members: ReturnType<CollectionType<Member>>
+    members: ReturnType<CollectionType<Member>>;
+    memberCount: number;
+    owner: Member;
+    channels: string[];
   }
 
   interface ClientOptions {
@@ -51,7 +55,7 @@ declare namespace Ruhs {
   const eventHandlers: ({
     ready?: (() => unknown),
     guildCreate?: ((guild: Guild) => unknown),
-    guildMemberAdd?: ((member: Member) => unknown)
+    guildMemberAdd?: ((member: Member, guild: Guild) => unknown)
   });
 }
 

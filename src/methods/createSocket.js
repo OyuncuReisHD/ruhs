@@ -5,6 +5,7 @@ const {eventHandlers, cache} = require("../botProperties.js");
 const Collection = require("../utils/Collection.js");
 
 const createGuild = require("./createGuild.js");
+const createMember = require("./createMember.js");
 
 let erlpack, zlib;
 let ping = 0;
@@ -35,7 +36,6 @@ const createSocket = (async (token, clientOptions) => {
   let gatewayURL = await Axios.get("https://discord.com/api/gateway");
   gatewayURL = gatewayURL.data.url;
   gatewayURL = gatewayURL.endsWith("/") ? gatewayURL : (gatewayURL + "/");
-  console.log(gatewayURL);
 
   let heartbeatInterval = 0;
   let lastSequence = null;
@@ -78,7 +78,7 @@ const createSocket = (async (token, clientOptions) => {
     }
 
     if(wsData.op === 10) {
-      hearbeatInterval = wsData.hearbeat_interval;
+      heartbeatInterval = wsData.d.heartbeat_interval;
 
       setInterval(() => {
         ws.send(pack({
@@ -92,9 +92,9 @@ const createSocket = (async (token, clientOptions) => {
         "d": {
           "token": token,
           "properties": {
-            "os": process.platorm,
-            "browser": "ruhs",
-            "device": "ruhs"
+            "$os": process.platorm,
+            "$browser": "ruhs",
+            "$device": "ruhs"
           }
         }
       };
@@ -118,7 +118,7 @@ const createSocket = (async (token, clientOptions) => {
       };
 
       if(clientOptions.intents && (clientOptions.intents.length !== 0)) {
-        identifyData.intents = clientOptions.intents.map((intent) => Intents[intent]).reduce((bits, next) => bits | next, 0);
+        identifyData.d.intents = clientOptions.intents.map((intent) => Intents[intent]).reduce((bits, next) => bits | next, 0);
       }
 
       ws.send(pack(identifyData));
@@ -134,18 +134,19 @@ const createSocket = (async (token, clientOptions) => {
           eventHandlers.ready();
         }
       } else if(wsData.t === "GUILD_CREATE") {
-        const guild = createGuild(wsData.d);
+        const guild = await createGuild(wsData.d, token);
 
-        cache.guilds.set(wsData.d.id, createGuild(wsData.d));
+        cache.guilds.set(wsData.d.id, guild);
 
         if(eventHandlers.guildCreate) {
           eventHandlers.guildCreate(guild);
         }
       } else if(wsData.t === "GUILD_MEMBER_ADD") {
         const guild = cache.guilds.get(wsData.d.guild_id);
-        const member = createMember(wsData.d.member);
+        const member = createMember(wsData.d);
 
-        guild.members.set(wsData.d.member.user.id, member);
+        guild.members.set(wsData.d.user.id, guild);
+
         guild.memberCount += 1;
 
         cache.guilds.set(wsData.d.guild_id, member);
@@ -154,6 +155,8 @@ const createSocket = (async (token, clientOptions) => {
           eventHandlers.guildMemberAdd(member, guild);
         }
       }
+
+      lastSequence = wsData.s;
     }
   });
 });

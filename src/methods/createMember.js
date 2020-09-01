@@ -1,15 +1,16 @@
 const createUser = require("./createUser.js");
 
-const createMember = ((data) => {
-  const memberData = {};
+const createMember = ((memberData) => {
+  const member = {};
 
-  memberData.user = createUser(data.user);
-  memberData.nick = data.nick;
-  memberData.roles = data.roles;
-  memberData.joinedAt = data.joined_at ? new Date(data.joined_at) : undefined;
-  memberData.premiumSince = data.premium_since ? new Date(data.premium_since) : undefined;
-  memberData.deaf = data.deaf;
-  memberData.mute = data.mute;
+  member.id = memberData.user.id;
+  member.user = createUser(memberData.user);
+  member.nick = memberData.nick;
+  member.roles = memberData.roles;
+  member.joinedAt = memberData.joined_at ? new Date(memberData.joined_at) : undefined;
+  member.premiumSince = memberData.premium_since ? new Date(memberData.premium_since) : undefined;
+  member.deaf = memberData.deaf;
+  member.mute = memberData.mute;
 
   return memberData;
 });

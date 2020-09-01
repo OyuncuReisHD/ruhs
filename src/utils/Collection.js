@@ -1,5 +1,5 @@
-const Collection = ((collectionData = [], key) => {
-  const data = collectionData.map((d, i) => [key ? d[key] : i, d]);
+const Collection = ((collectionData = [], parameter = "id") => {
+  const data = collectionData.map((d, i) => [d[parameter] || i, d]);
   const base = {};
 
   base.has = ((key) => {
@@ -11,7 +11,7 @@ const Collection = ((collectionData = [], key) => {
   });
 
   base.get = ((key) => {
-    return (base.has(key) ? data.map((d) => d[0] === key)[1]  : undefined);
+    return (base.has(key) ? data.find((d) => d[0] === key)[1]  : undefined);
   });
 
   base.set = ((key, value) => {

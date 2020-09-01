@@ -1,12 +1,12 @@
 const axios = require("axios");
 
-const request = (async(method, path, token, requestData = {}) => {
+const request = (async(method, path, token, requestData) => {
   return new Promise((resolve) => {
     (async() => {
       const {data} = await axios({
         method,
         url: "http://discord.com/api/v6" + path,
-        data: (Object.keys(requestData).length === 0) ? undefined : requestData,
+        data: requestData,
         headers: {
           Authorization: "Bot " + token
         }
