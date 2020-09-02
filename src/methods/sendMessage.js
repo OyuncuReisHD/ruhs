@@ -1,7 +1,7 @@
 const request = require("../utils/request.js");
 
 const sendMessage = (async (channelID, data) => {
-  const msg = await request("POST", "/channels/" + channelID + "/messages", "NzQ5OTQwMjEzNjUyMTI3ODU1.X0zSQA.GMGQdD8KCTrrdfV9WhlG4E1DYGE", {
+  const msg = await request("POST", "/channels/" + channelID + "/messages", "a", {
     content: (typeof data === "string") ? data : (data.content || null),
     embed: data.embed || null,
     tts: data.tts || false
