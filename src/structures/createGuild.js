@@ -43,7 +43,7 @@ const createGuild = (async(guildData, token) => {
   if(members.has(guildData.owner_id)) {
     guild.owner = members.get(guildData.owner_id);
   } else {
-    const ownerMember = await request("GET", "/guilds/" + guild.id + "/members/" + guildData.owner_id, token);
+    const ownerMember = await request("GET", "/guilds/" + guild.id + "/members/" + guildData.owner_id);
   
     members.set(guildData.owner_id, ownerMember);
   
@@ -63,7 +63,7 @@ const createGuild = (async(guildData, token) => {
   guild.defaultMessageNotifications = guildData.default_message_notifications;
   guild.explicitContentFilter = guildData.explicit_content_filter;
   guild.roles = Collection(guildData.roles.map((roleData) => createRole(roleData)), "owner_id");
-  guild.emojis = guildData.emojis; // emoji structure
+  guild.emojis = Collection(guildData.emojis.map((emojiData) => createEmoji(emojiData)), "owner_id");
   guild.features = guildData.features;
   guild.mfaLevel = guildData.mfa_level;
   guild.widgetEnabled = !!guildData.widget_enabled;

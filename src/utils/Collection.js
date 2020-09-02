@@ -4,7 +4,7 @@ const Collection = ((collectionData = [], parameter = "id") => {
 
   base.has = ((key) => {
     if(typeof key !== "string") {
-      throw new Error("First argument of Collection must be string.");
+      throw new Error("First argument of has method of Collection must be string.");
     }
 
     return data.map((d) => d[0]).includes(key);
@@ -16,7 +16,7 @@ const Collection = ((collectionData = [], parameter = "id") => {
 
   base.set = ((key, value) => {
     if(typeof key !== "string") {
-      throw new Error("First argument of Collection must be string.");
+      throw new Error("First argument of set method of Collection must be string.");
     }
 
     if(base.has(key)) {

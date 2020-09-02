@@ -1,6 +1,7 @@
 const {cache} = require("../botProperties.js");
 
 const Collection = require("../utils/Collection.js");
+const request = require("../utils/request.js");
 
 const createUser = require("./createUser.js");
 const createMember = require("./createMember.js");
@@ -16,8 +17,13 @@ const assingMemberUser = ((userData) => {
   }));
 });
 
-const createMessage = ((messageData) => {
+const createMessage = (async(messageData) => {
   const message = {};
+
+  if(!cache.channels.has(messageData.channel_id)) {
+    const channelData = await request("GET", "/channels/" + messageData.channel_id);
+    cache.channels.set(messageData.channel_id, createChannel(channelData));
+  }
 
   message.id = messageData.id;
 
@@ -51,11 +57,11 @@ const createMessage = ((messageData) => {
 
   message.tts = messageData.tts;
   message.mentionedEveryone = messageData.mention_everyone;
-  message.mentionedMembers = Collection(messageData.mentions.map((mentionData) => mentionData.member ? createMember(assingMemberUser(mentionData)) : createUser(mentionData)), "id");
-  message.mentionedRoles = Collection(messageData.mention_roles.map((roleData) => createRole(roleData)), "id");
+  message.mentions = Collection(messageData.mentions.map((mentionData) => mentionData.member ? createMember(assingMemberUser(mentionData)) : createUser(mentionData)), "id");
+  message.rolesMentions = Collection(messageData.mention_roles.map((roleData) => createRole(roleData)), "id");
 
   if(messageData.mention_channels) {
-    message.mentionedChannels = Collection(messageData.mention_channels.map((channelData) => createChannel(channelData)), "id");
+    message.channelsMentions = Collection(messageData.mention_channels.map((channelData) => createChannel(channelData)), "id");
   }
 
   return message;

@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 const Axios = require("axios");
 
-const {eventHandlers, cache} = require("../botProperties.js");
+const {eventHandlers, cache, botInfo} = require("../botProperties.js");
 
 const Collection = require("../utils/Collection.js");
 
@@ -12,6 +12,8 @@ const createMessage = require("../structures/createMessage.js");
 let erlpack, zlib;
 
 const createSocket = (async (token, clientOptions) => {
+  botInfo.token = token;
+
   const wsOptions = Object.assign({}, ({
     "version": 6,
     "encoding": "json",
@@ -131,6 +133,7 @@ const createSocket = (async (token, clientOptions) => {
 
       if(wsData.t === "READY") {
         cache.guilds = Collection(wsData.d.guilds, "id");
+        botInfo.id = wsData.d.user.id;
 
         if(eventHandlers.ready) {
           await eventHandlers.ready();
@@ -157,7 +160,7 @@ const createSocket = (async (token, clientOptions) => {
           await eventHandlers.guildMemberAdd(member, guild);
         }
       } else if(wsData.t === "MESSAGE_CREATE") {
-        const message = createMessage(wsData.d);
+        const message = await createMessage(wsData.d);
 
         if(eventHandlers.messageCreate) {
           await eventHandlers.messageCreate(message);

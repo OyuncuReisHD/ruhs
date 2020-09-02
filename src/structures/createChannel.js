@@ -7,7 +7,7 @@ const createChannel = ((channelData) => {
   channel.id = channelData.id;
   channel.type = types[channelData.type];
 
-  if(!["dm", "group_dm"].includes(channel.type)) {
+  if(channel.type !== "dm") {
     channel.position = channelData.position;
     channel.positionOverwrites = channelData.permission_overwrites; // overwrite structure
     channel.name = channelData.name;
@@ -28,10 +28,8 @@ const createChannel = ((channelData) => {
     channel.rateLimitPerUser = channelData.rate_limit_per_user;
   }
 
-  if(["dm", "group_dm"].includes(channel.type)) {
+  if(channel.type === "dm") {
     channel.recipients = channelData.recipients.map((recipient) => createUser(recipient));
-    channel.icon = channelData.icon || null; // hash
-    channel.ownerID = channelData.owner_id;
   } else {
     channel.parentID = channelData.parent_id || null;
   }

@@ -5,9 +5,15 @@ const cache = ({
   "channels": Collection()
 });
 
+const botInfo = ({
+  "id": "",
+  "token": ""
+});
+
 const eventHandlers = ({});
 
 module.exports = ({
+  botInfo,
   cache,
   eventHandlers
 });

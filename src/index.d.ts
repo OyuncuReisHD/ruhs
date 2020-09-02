@@ -1,17 +1,21 @@
 declare namespace Ruhs {
-  type Intent =
-    "GUILDS" | "GUILD_MEMBERS" | "GUILD_BANS" |
-    "GUILD_EMOJIS" | "GUILD_INTEGRATIONS" | "GUILD_WEBHOOKS" |
-    "GUILD_INVITES" | "GUILD_VOICE_STATES" | "GUILD_PRESENCES" |
-    "GUILD_MESSAGES" | "GUILD_MESSAGE_REACTIONS" | "GUILD_MESSAGE_TYPING" |
-    "DIRECT_MESSAGES" | "DIRECT_MESSAGE_REACTIONS" | "DIRECT_MESSAGE_TYPING";
-
   interface User {
     id: string;
     username: string;
     discriminator: number;
     tag: string;
     getAvatar: (() => string);
+  }
+
+  interface Emoji {
+    id: string | null;
+    name: string | null;
+    roles?: string[];
+    user?: User;
+    requireColons?: boolean;
+    managed?: boolean;
+    animated?: boolean;
+    available?: boolean;
   }
 
   interface Role {
@@ -48,16 +52,8 @@ declare namespace Ruhs {
     userLimit?: number;
     rateLimitPerUser?: number;
     recipients?: User[];
-    icon?: string | null; // hash
-    ownerID?: string;
     parentID: string | null;
   }
-
-  type CollectionType<V> = ((collectionData: V[], key?: string) => {
-    has: ((key: string) => boolean),
-    get: ((key: string) => (V | undefined)),
-    set: ((key: string, value: unknown) => void)
-  });
 
   interface Guild {
     id: string;
@@ -73,8 +69,8 @@ declare namespace Ruhs {
     verificationLevel: number;
     defaultMessageNotifications: number;
     explicitContentFilter: number;
-    roles: Role[];
-    emojis: unknown; // emoji structure
+    roles: ReturnType<CollectionType<Role>>;
+    emojis: ReturnType<CollectionType<Emoji>>;
     features: unknown; // feature structure
     mfaLevel: number;
     widgetEnabled: boolean;
@@ -88,7 +84,7 @@ declare namespace Ruhs {
     voiceStates: unknown; // voice state structure
     memberCount: number;
     channels: string[];
-    presences: unknown; // presences structure
+    presences: unknown; // presence structure
     maxPresences?: number;
     maxMembers?: number;
     vanityCode?: string;
@@ -101,14 +97,34 @@ declare namespace Ruhs {
     maxVideoChannelUsers?: number;
   }
 
-  interface ClientOptions {
-    ws?: ({
-      version?: number;
-      encoding?: "json" | "etf";
-      compress?: boolean;
-    });
-    intents?: Intent[];
+  interface Message {
+    id: string;
+    channel: (() => Channel);
+    guild?: (() => Guild);
+    author: User;
+    member: (() => Member | null);
+    content: string;
+    createdAt: Date;
+    edited: boolean;
+    editedAt?: Date;
+    tts: boolean;
+    mentionedEveryone: boolean;
+    mentions: ReturnType<CollectionType<(Member | User)>>;
+    rolesMentions: ReturnType<CollectionType<Role>>;
+    channelMentions: ReturnType<CollectionType<Channel>>;
+    attachments: unknown; // attachment structure
+    embeds: Embed[];
+    reactions: unknown; // reaction structure
+    nonce: number | string;
+    pinned: boolean;
+    type: number;
   }
+
+
+
+
+
+
 
   interface EmbedFooter {
     text: string;
@@ -163,39 +179,53 @@ declare namespace Ruhs {
     fields: EmbedField[];
   }
 
-  interface Message {
-    id: string;
-    channel_id: string;
-    guild_id?: string;
-    author: User;
-    member: Member;
-    content: string;
-    timestamp: number;
-    edited_timestamp?: number;
-    tts: boolean;
-    // mention_everyone, mentions, mention_roles, mention_channels
-    // attachments
-    embeds: Embed[];
-    // reactions
-    nonce: number | string;
-    pinned: boolean;
-    type: number;
+
+
+
+
+
+  type Intent =
+    "GUILDS" | "GUILD_MEMBERS" | "GUILD_BANS" |
+    "GUILD_EMOJIS" | "GUILD_INTEGRATIONS" | "GUILD_WEBHOOKS" |
+    "GUILD_INVITES" | "GUILD_VOICE_STATES" | "GUILD_PRESENCES" |
+    "GUILD_MESSAGES" | "GUILD_MESSAGE_REACTIONS" | "GUILD_MESSAGE_TYPING" |
+    "DIRECT_MESSAGES" | "DIRECT_MESSAGE_REACTIONS" | "DIRECT_MESSAGE_TYPING";
+
+  type CollectionType<V> = ((collectionData: V[], key?: string) => {
+    has: ((key: string) => boolean),
+    get: ((key: string) => (V | undefined)),
+    set: ((key: string, value: unknown) => void)
+  });
+
+  interface ClientOptions {
+    ws?: ({
+      version?: number;
+      encoding?: "json" | "etf";
+      compress?: boolean;
+    });
+    intents?: Intent[];
   }
 
-  type ContentData = string | {
-    content?: string;
-    embed?: Embed;
-    tts?: boolean;
-  };
-
-  const sendMessage: ((channelID: string, data: ContentData) => Message);
+  type ContentData = string | ({
+      content?: string;
+      embed?: Embed;
+      tts?: boolean;
+    });
 
   const Collection: CollectionType<any>;
 
+  const sendMessage: ((channelID: string, data: ContentData) => Message);
+
   const createClient: ((token: string, options: ClientOptions) => Promise<void>);
+  
   const cache: ({
     guilds: ReturnType<CollectionType<Guild>>,
     channels: ReturnType<CollectionType<Channel>>
+  });
+
+  const botInfo: ({
+    id: string;
+    token: string;
   });
 
   const eventHandlers: ({
