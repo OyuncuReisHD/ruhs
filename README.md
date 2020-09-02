@@ -1,7 +1,7 @@
-# ruly
+# ruhs
 A lightweight Discord library for Node.
 
-[![npm dependencies](https://img.shields.io/librariesio/release/npm/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
+[![npm dependencies](https://img.shields.io/librariesio/release/npm/ruhs?style=flat-square)](https://npmjs.com/package/ruhs?activeTab=dependencies)
 [![npm version](https://img.shields.io/npm/v/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
 [![npm downloads](https://img.shields.io/npm/dt/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
 [![npm license](https://img.shields.io/npm/l/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
@@ -26,6 +26,8 @@ ruhs.eventHandlers.messageCreate = ((message) => {
 });
 
 (async () => {
-  await ruhs.createClient(token);
+  await ruhs.createClient(token, {
+    "intents": "ALL"
+  });
 })();
 ```

@@ -17,7 +17,7 @@ const assingMemberUser = ((userData) => {
 });
 
 const createMessage = ((messageData) => {
-  const message = ({});
+  const message = {};
 
   message.id = messageData.id;
 

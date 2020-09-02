@@ -12,13 +12,13 @@ const createMessage = require("../structures/createMessage.js");
 let erlpack, zlib;
 
 const createSocket = (async (token, clientOptions) => {
-  const options = Object.assign({}, ({
+  const wsOptions = Object.assign({}, ({
     "version": 6,
     "encoding": "json",
     "compress": false
   }), (clientOptions.ws || {}));
 
-  if(options.encoding === "etf") {
+  if(wsOptions.encoding === "etf") {
     try {
       erlpack = require("erlpack");
     } catch(error) {
@@ -26,7 +26,7 @@ const createSocket = (async (token, clientOptions) => {
     }
   }
 
-  if (options.compress) {
+  if (wsOptions.compress) {
     try {
       zlib = require("zlib-sync");
     } catch(error) {
@@ -41,26 +41,26 @@ const createSocket = (async (token, clientOptions) => {
   let heartbeatInterval = 0;
   let lastSequence = null;
 
-  const ws = new WebSocket(gatewayURL + "?" + ("v=" + options.version) + "&" + ("encoding=" + options.encoding) + (options.compress ? "&compress=zlib-stream" : ""));
-  const pack = options.encoding === "etf" ? erlpack.pack : JSON.stringify;
-  const unpack = options.encoding === "etf" ? ((data) => {
+  const ws = new WebSocket(gatewayURL + "?" + ("v=" + wsOptions.version) + "&" + ("encoding=" + wsOptions.encoding) + (wsOptions.compress ? "&compress=zlib-stream" : ""));
+  const pack = wsOptions.encoding === "etf" ? erlpack.pack : JSON.stringify;
+  const unpack = wsOptions.encoding === "etf" ? ((data) => {
     return erlpack.unpack(Buffer.from(new Uint8Array(data)));
   }) : JSON.parse;
 
   let inflator;
 
-  if(options.compress) {
+  if(wsOptions.compress) {
     inflator = new zlib.Inflate({
       chunkSize: 65535,
       flush: zlib.Z_SYNC_FLUSH,
-      to: options.encoding === "json" ? "string" : ""
+      to: wsOptions.encoding === "json" ? "string" : ""
     });
   }
 
   ws.on("message", async (data) => {
     let wsData;
 
-    if(options.compress) {
+    if(wsOptions.compress) {
       const len = data.length;
       const flush = (len > 4) &&
         (data[len - 4] === 0x00) &&
@@ -117,8 +117,10 @@ const createSocket = (async (token, clientOptions) => {
         "DIRECT_MESSAGE_TYPING": 1 << 14
       };
 
-      if(clientOptions.intents && (clientOptions.intents.length !== 0)) {
+      if(clientOptions.intents && Array.isArray(clientOptions.intents) &&(clientOptions.intents.length !== 0)) {
         identifyData.d.intents = clientOptions.intents.map((intent) => Intents[intent]).reduce((bits, next) => bits | next, 0);
+      } else if(clientOptions.intents === "ALL") {
+        identifyData.d.intents = Object.values(Intents).reduce((bits, next) => bits | next, 0);
       }
 
       ws.send(pack(identifyData));
