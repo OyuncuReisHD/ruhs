@@ -35,6 +35,8 @@ const createChannel = ((channelData) => {
   } else {
     channel.parentID = channelData.parent_id || null;
   }
+
+  return channel;
 });
 
 module.exports = createChannel;

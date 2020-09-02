@@ -2,10 +2,12 @@ const WebSocket = require("ws");
 const Axios = require("axios");
 
 const {eventHandlers, cache} = require("../botProperties.js");
+
 const Collection = require("../utils/Collection.js");
 
 const createGuild = require("../structures/createGuild.js");
 const createMember = require("../structures/createMember.js");
+const createMessage = require("../structures/createMessage.js");
 
 let erlpack, zlib;
 
@@ -129,7 +131,7 @@ const createSocket = (async (token, clientOptions) => {
         cache.guilds = Collection(wsData.d.guilds, "id");
 
         if(eventHandlers.ready) {
-          eventHandlers.ready();
+          await eventHandlers.ready();
         }
       } else if(wsData.t === "GUILD_CREATE") {
         const guild = await createGuild(wsData.d, token);
@@ -137,7 +139,7 @@ const createSocket = (async (token, clientOptions) => {
         cache.guilds.set(wsData.d.id, guild);
 
         if(eventHandlers.guildCreate) {
-          eventHandlers.guildCreate(guild);
+          await eventHandlers.guildCreate(guild);
         }
       } else if(wsData.t === "GUILD_MEMBER_ADD") {
         const guild = cache.guilds.get(wsData.d.guild_id);
@@ -150,7 +152,13 @@ const createSocket = (async (token, clientOptions) => {
         cache.guilds.set(wsData.d.guild_id, member);
 
         if(eventHandlers.guildMemberAdd) {
-          eventHandlers.guildMemberAdd(member, guild);
+          await eventHandlers.guildMemberAdd(member, guild);
+        }
+      } else if(wsData.t === "MESSAGE_CREATE") {
+        const message = createMessage(wsData.d);
+
+        if(eventHandlers.messageCreate) {
+          await eventHandlers.messageCreate(message);
         }
       }
 

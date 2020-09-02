@@ -1,5 +1,6 @@
 const createMember = require("./createMember.js");
 const createRole = require("./createRole.js");
+const createChannel = require("./createChannel.js");
 
 const Collection = require("../utils/Collection.js");
 const request = require("../utils/request.js");
@@ -88,7 +89,7 @@ const createGuild = (async(guildData, token) => {
   guild.channels = guildData.channels.map((channel) => channel.id);
 
   for(let i = 0; i < guildData.channels.length; i++) {
-    cache.channels.set(guildData.channels[i].id, guildData.channels[i]);
+    cache.channels.set(guildData.channels[i].id, createChannel(guildData.channels[i]));
   }
 
   guild.presences = guildData.presences; // presence structure
