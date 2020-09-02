@@ -110,6 +110,86 @@ declare namespace Ruhs {
     intents?: Intent[];
   }
 
+  interface EmbedFooter {
+    text: string;
+    icon_url?: string;
+    proxy_icon_url?: string;
+  }
+
+  interface EmbedImage {
+    url?: string;
+    proxy_url?: string;
+    height?: number;
+    width?: number;
+  }
+
+  interface EmbedThumbnail {
+    url?: string;
+    proxy_url?: string;
+    height?: number;
+    width?: number;
+  }
+
+  interface EmbedVideo {
+    url?: string;
+    height?: number;
+    width?: number;
+  }
+
+  interface EmbedAuthor {
+    name?: string;
+    url?: string;
+    icon_url?: string;
+    proxy_icon_url?: string;
+  }
+
+  interface EmbedField {
+    name: string;
+    value: string;
+    inline?: boolean;
+  }
+
+  interface Embed {
+    title?: string;
+    description?: string;
+    url?: string;
+    timestamp?: number;
+    color?: number;
+    footer?: EmbedFooter;
+    image?: EmbedImage;
+    thumbnail?: EmbedThumbnail;
+    video?: EmbedVideo;
+    author?: EmbedAuthor;
+    fields: EmbedField[];
+  }
+
+  interface Message {
+    id: string;
+    channel_id: string;
+    guild_id?: string;
+    author: User;
+    member: Member;
+    content: string;
+    timestamp: number;
+    edited_timestamp?: number;
+    tts: boolean;
+    // mention_everyone, mentions, mention_roles, mention_channels
+    // attachments
+    embeds: Embed[];
+    // reactions
+    nonce: number | string;
+    pinned: boolean;
+    type: number;
+  }
+
+  type ContentData = string | {
+    content?: string;
+    embed?: Embed;
+    tts?: boolean;
+  };
+
+  const sendMessage: ((channelID: string, data: ContentData) => Message);
+
   const Collection: CollectionType<any>;
 
   const createClient: ((token: string, options: ClientOptions) => Promise<void>);
@@ -121,7 +201,8 @@ declare namespace Ruhs {
   const eventHandlers: ({
     ready?: (() => unknown),
     guildCreate?: ((guild: Guild) => unknown),
-    guildMemberAdd?: ((member: Member, guild: Guild) => unknown)
+    guildMemberAdd?: ((member: Member, guild: Guild) => unknown),
+    messageCreate?: ((message: Message) => unknown)
   });
 }
 
