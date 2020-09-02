@@ -1,6 +1,7 @@
 const createMember = require("./createMember.js");
 const createRole = require("./createRole.js");
 const createChannel = require("./createChannel.js");
+const createEmoji = require("./createEmoji.js");
 
 const Collection = require("../utils/Collection.js");
 const request = require("../utils/request.js");

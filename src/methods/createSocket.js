@@ -10,6 +10,7 @@ const createMember = require("../structures/createMember.js");
 const createMessage = require("../structures/createMessage.js");
 
 let erlpack, zlib;
+let wsObject = {};
 
 const createSocket = (async (token, clientOptions) => {
   botInfo.token = token;
@@ -43,9 +44,9 @@ const createSocket = (async (token, clientOptions) => {
   let heartbeatInterval = 0;
   let lastSequence = null;
 
-  const ws = new WebSocket(gatewayURL + "?" + ("v=" + wsOptions.version) + "&" + ("encoding=" + wsOptions.encoding) + (wsOptions.compress ? "&compress=zlib-stream" : ""));
-  const pack = wsOptions.encoding === "etf" ? erlpack.pack : JSON.stringify;
-  const unpack = wsOptions.encoding === "etf" ? ((data) => {
+  wsObject.ws = new WebSocket(gatewayURL + "?" + ("v=" + wsOptions.version) + "&" + ("encoding=" + wsOptions.encoding) + (wsOptions.compress ? "&compress=zlib-stream" : ""));
+  wsObject.pack = wsOptions.encoding === "etf" ? erlpack.pack : JSON.stringify;
+  wsObject.unpack = wsOptions.encoding === "etf" ? ((data) => {
     return erlpack.unpack(Buffer.from(new Uint8Array(data)));
   }) : JSON.parse;
 
@@ -59,7 +60,7 @@ const createSocket = (async (token, clientOptions) => {
     });
   }
 
-  ws.on("message", async (data) => {
+  wsObject.ws.on("message", async (data) => {
     let wsData;
 
     if(wsOptions.compress) {
@@ -74,16 +75,16 @@ const createSocket = (async (token, clientOptions) => {
 
       if(!flush) return;
 
-      wsData = unpack(inflator.result);
+      wsData = wsObject.unpack(inflator.result);
     } else {
-      wsData = unpack(data);
+      wsData = wsObject.unpack(data);
     }
 
     if(wsData.op === 10) {
       heartbeatInterval = wsData.d.heartbeat_interval;
 
       setInterval(() => {
-        ws.send(pack({
+        wsObject.ws.send(wsObject.pack({
           "op": 1,
           "d": lastSequence
         }));
@@ -125,7 +126,7 @@ const createSocket = (async (token, clientOptions) => {
         identifyData.d.intents = Object.values(Intents).reduce((bits, next) => bits | next, 0);
       }
 
-      ws.send(pack(identifyData));
+      wsObject.ws.send(wsObject.pack(identifyData));
     } else if(wsData.op === 0) {
       if(eventHandlers.rawWS) {
         await eventHandlers.rawWS(wsData);
@@ -170,6 +171,9 @@ const createSocket = (async (token, clientOptions) => {
       lastSequence = wsData.s;
     }
   });
+
+  wsObject.ws.on("error", console.log);
+  wsObject.ws.on("close", console.log);
 });
 
-module.exports = createSocket;
+module.exports = {createSocket, wsObject};

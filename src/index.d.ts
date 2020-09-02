@@ -205,11 +205,14 @@ declare namespace Ruhs {
     set: ((key: string, value: unknown) => void)
   });
 
-  type ContentData = string | ({
+  type MessageContent = string | ({
     content?: string;
     embed?: Embed;
     tts?: boolean;
   });
+
+  type PresenceTypes = "gaming" | "listening" | "streaming";
+  type PresenceStatuses = "online" | "dnd" | "idle" | "invisible" | "offline";
 
 
 
@@ -224,12 +227,24 @@ declare namespace Ruhs {
     intents?: Intent[];
   }
 
+  interface PresenceOptions {
+    game?: {
+      name: string;
+      type: PresenceTypes,
+      url?: string
+    },
+    afk?: boolean,
+    status?: PresenceStatuses
+  }
+
 
 
 
   const Collection: CollectionType<any>;
 
-  const sendMessage: ((channelID: string, data: ContentData) => Message);
+  const sendMessage: ((channelID: string, data: MessageContent) => Message);
+
+  const setPresence = ((presence: PresenceOptions) => void);
 
   const createClient: ((token: string, options: ClientOptions) => Promise<void>);
   
