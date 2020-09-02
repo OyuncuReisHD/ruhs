@@ -18,6 +18,12 @@ const assingMemberUser = ((userData) => {
 });
 
 const createMessage = (async(messageData) => {
+  const types = ["DEFAULT", "RECIPIENT_ADD", "RECIPIENT_REMOVE", "CALL",
+    "CHANNEL_NAME_CHANGE", "CHANNEL_ICON_CHANGE", "CHANNEL_PINNED_MESSAGE",
+    "GUILD_MEMBER_JOIN", "USER_PREMIUM_GUILD_SUBSCRIPTION", "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1",
+    "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2", "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3",
+    "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3", "CHANNEL_FOLLOW_ADD", "GUILD_DISCOVERY_DISQUALIFIED", "GUILD_DISCOVERY_REQUALIFIED"];
+
   const message = {};
 
   if(!cache.channels.has(messageData.channel_id)) {
@@ -63,6 +69,25 @@ const createMessage = (async(messageData) => {
   if(messageData.mention_channels) {
     message.channelsMentions = Collection(messageData.mention_channels.map((channelData) => createChannel(channelData)), "id");
   }
+
+  message.attachments = messageData.attachments; // attachment structure
+  message.embeds = messageData.embeds;
+
+  if(messageData.reactions) {
+    message.reactions = messageData.reactions; // reaction structure
+  }
+
+  if(message.nonce) {
+    message.nonce = messageData.nonce;
+  }
+
+  message.pinned = messageData.pinned;
+
+  if(messageData.webhook_id) {
+    message.webhookID = messageData.webhook_id;
+  }
+
+  message.type = types[messageData.type];
 
   return message;
 });
