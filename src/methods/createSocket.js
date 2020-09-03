@@ -136,16 +136,26 @@ const createSocket = (async (token, clientOptions) => {
         cache.guilds = Collection(wsData.d.guilds, "id");
         botInfo.id = wsData.d.user.id;
 
-        if(eventHandlers.ready) {
-          await eventHandlers.ready();
+        if(eventHandlers.preReady) {
+          await eventHandlers.preReady();
         }
       } else if(wsData.t === "GUILD_CREATE") {
-        const guild = await createGuild(wsData.d, token);
+        if(cache.guilds.has(wsData.d.id)) {
+          const guild = await createGuild(wsData.d);
 
-        cache.guilds.set(wsData.d.id, guild);
+          cache.guilds.set(wsData.d.id, guild);
 
-        if(eventHandlers.guildCreate) {
-          await eventHandlers.guildCreate(guild);
+          if(eventHandlers.guildCache) {
+            await eventHandlers.guildCache(guild);
+          }
+        } else {
+          const guild = await createGuild(wsData.d);
+
+          cache.guilds.set(wsData.d.id, guild);
+
+          if(eventHandlers.guildCreate) {
+            await eventHandlers.guildCreate(guild);
+          }
         }
       } else if(wsData.t === "GUILD_MEMBER_ADD") {
         const guild = cache.guilds.get(wsData.d.guild_id);

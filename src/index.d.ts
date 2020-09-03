@@ -80,6 +80,7 @@ declare namespace Ruhs {
     rulesChannelID?: string;
     joinedAt: Date;
     large: boolean;
+    unavailable: boolean;
     members: ReturnType<CollectionType<Member>>;
     voiceStates: unknown; // voice state structure
     memberCount: number;
@@ -233,7 +234,7 @@ declare namespace Ruhs {
       encoding?: "json" | "etf";
       compress?: boolean;
     });
-    intents?: Intent[];
+    intents?: "ALL" | Intent[];
   }
 
   interface PresenceOptions {
@@ -268,10 +269,11 @@ declare namespace Ruhs {
   });
 
   const eventHandlers: ({
-    ready?: (() => unknown),
-    guildCreate?: ((guild: Guild) => unknown),
-    guildMemberAdd?: ((member: Member, guild: Guild) => unknown),
-    messageCreate?: ((message: Message) => unknown)
+    ready?: (() => Promise<void> | void),
+    guildCreate?: ((guild: Guild) => Promise<void> | void),
+    guildCache?: ((guild: Guild) => Promise<void> | void),
+    guildMemberAdd?: ((member: Member, guild: Guild) => Promise<void> | void),
+    messageCreate?: ((message: Message) => Promise<void> | void)
   });
 }
 

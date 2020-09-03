@@ -89,6 +89,7 @@ const createGuild = (async(guildData) => {
 
   guild.joinedAt = new Date(guildData.joined_at);
   guild.large = !!guildData.large;
+  guild.unavailable = !!guildData.unavailable;
 
   guild.memberCount = guildData.member_count;
   guild.voiceStates = guildData.voice_states; // voiceState structure
