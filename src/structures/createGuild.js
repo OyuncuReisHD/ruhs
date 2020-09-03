@@ -8,9 +8,16 @@ const request = require("../utils/request.js");
 
 const {cache} = require("../botProperties.js");
 
-const createGuild = (async(guildData, token) => {
+const createGuild = (async(guildData) => {
   const guild = {};
-  const members = Collection(guildData.members.map((memberData) => createMember(memberData)), "id");
+
+  const members = Collection();
+
+  guildData.members.forEach((memberData) => {
+    if(guildData.members.filter((value) => value.id === memberData.id).size !== 1) {
+      members.set(memberData.user.id, createMember(memberData));
+    }
+  });
 
   guild.id = guildData.id;
   guild.name = guildData.name;
@@ -46,7 +53,7 @@ const createGuild = (async(guildData, token) => {
   } else {
     const ownerMember = await request("GET", "/guilds/" + guild.id + "/members/" + guildData.owner_id);
   
-    members.set(guildData.owner_id, ownerMember);
+    members.set(guildData.owner_id, createMember(ownerMember));
   
     guild.owner = members.get(guildData.owner_id, ownerMember);
   }

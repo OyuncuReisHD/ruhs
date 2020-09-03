@@ -46,6 +46,38 @@ const Collection = ((collectionData = [], parameter = "id") => {
     return data.slice(-1)[0][1];
   });
 
+  base.size = (() => {
+    return data.length;
+  });
+
+  base.map = ((fn) => {
+    const newBase = Collection();
+
+    data.forEach((d) => {
+      newBase.set(d[0], fn(d[1], d[0], base.keys().indexOf(d[0]), base.array()));
+    });
+
+    return newBase;
+  });
+
+  base.filter = ((fn) => {
+    const newBase = Collection();
+
+    data.forEach((d) => {
+      if(fn(d[1], d[0], base.keys().indexOf(d[0]), base.array())) {
+        newBase.set(d[0], d[1]);
+      }
+    });
+
+    return newBase;
+  });
+
+  base.forEach = ((fn) => {
+    data.forEach((d) => {
+      fn(d[1], d[0], base.keys().indexOf(d[0]), base.array());
+    });
+  });
+
   return base;
 });
 

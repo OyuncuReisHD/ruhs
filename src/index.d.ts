@@ -200,9 +200,18 @@ declare namespace Ruhs {
     "GUILD_DISCOVERY_REQUALIFIED";
 
   type CollectionType<V> = ((collectionData: V[], key?: string) => {
-    has: ((key: string) => boolean),
-    get: ((key: string) => (V | undefined)),
-    set: ((key: string, value: unknown) => void)
+    has: ((key: string) => boolean);
+    get: ((key: string) => V | undefined);
+    set: ((key: string, value: unknown) => void);
+    array: (() => V[] | undefined);
+    keys: (() => string);
+    entries: (() => [string, V][]);
+    first: (() => V);
+    last: (() => V);
+    size: (() => number);
+    map: ((callbackFn: ((value: V, index: number, array: V[]) => unknown)) => ReturnType<CollectionType<V>>);
+    filter: ((callbackFn: ((value: V, index: number, array: V[]) => boolean)) => ReturnType<CollectionType<V>>);
+    forEach: ((callbackFn: ((value: V, index: number, array: V[]) => void)) => Promise<void> | void);
   });
 
   type MessageContent = string | ({

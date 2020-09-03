@@ -47,11 +47,18 @@ const createMessage = (async(messageData) => {
 
   message.member = (() => {
     if(messageData.member) {
-      return createMember(memberData);
+      return createMember(Object.assign({}, messageData.member, {
+        user: messageData.author
+      }));
     } else {
       return null;
     }
   });
+
+  if(message.member() && message.guild && message.guild() && !message.guild().members.has(message.member().id)) {
+    const member = message.member();
+    message.guild().members.set(member.id, member);
+  }
 
   message.content = messageData.content;
   message.createdAt = new Date(messageData.timestamp);

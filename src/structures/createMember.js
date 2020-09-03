@@ -16,7 +16,7 @@ const createMember = ((memberData) => {
   member.deaf = memberData.deaf;
   member.mute = memberData.mute;
 
-  return memberData;
+  return member;
 });
 
 module.exports = createMember;
