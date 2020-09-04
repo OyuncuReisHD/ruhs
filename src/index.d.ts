@@ -205,14 +205,14 @@ declare namespace Ruhs {
     get: ((key: string) => V | undefined);
     set: ((key: string, value: unknown) => void);
     array: (() => V[] | undefined);
-    keys: (() => string);
-    entries: (() => [string, V][]);
-    first: (() => V);
-    last: (() => V);
+    keys: (() => string[]);
+    entries: (() => [string, V | unknown][]);
+    first: (() => V | unknown);
+    last: (() => V | unknown);
     size: (() => number);
-    map: ((callbackFn: ((value: V, index: number, array: V[]) => unknown)) => ReturnType<CollectionType<V>>);
-    filter: ((callbackFn: ((value: V, index: number, array: V[]) => boolean)) => ReturnType<CollectionType<V>>);
-    forEach: ((callbackFn: ((value: V, index: number, array: V[]) => void)) => Promise<void> | void);
+    map: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => unknown)) => ReturnType<CollectionType<V | unknown>>);
+    filter: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => boolean)) => ReturnType<CollectionType<V | unknown>>);
+    forEach: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => void)) => Promise<void> | void);
   });
 
   type MessageContent = string | ({
@@ -222,7 +222,10 @@ declare namespace Ruhs {
   });
 
   type PresenceTypes = "gaming" | "listening" | "streaming";
+
   type PresenceStatuses = "online" | "dnd" | "idle" | "invisible" | "offline";
+
+  type HTTPMethods = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
 
 
 
@@ -250,14 +253,17 @@ declare namespace Ruhs {
 
 
 
-  const Collection: CollectionType<any>;
+  const Collection: CollectionType<unknown>;
 
   const sendMessage: ((channelID: string, data: MessageContent) => Message);
 
-  const setPresence = ((presence: PresenceOptions) => void);
+  const setPresence: ((presence: PresenceOptions) => void);
 
   const createClient: ((token: string, options: ClientOptions) => Promise<void>);
-  
+
+  const request: ((method: HTTPMethods, path: string, requestData?: object) => Promise<unknown>);
+
+
   const cache: ({
     guilds: ReturnType<CollectionType<Guild>>,
     channels: ReturnType<CollectionType<Channel>>
