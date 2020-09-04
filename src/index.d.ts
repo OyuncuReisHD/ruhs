@@ -178,6 +178,18 @@ declare namespace Ruhs {
     author?: EmbedAuthor;
     fields: EmbedField[];
   }
+  
+  interface VoiceState {
+    channel: Channel;
+    guild?: Guild;
+    member?: Member;
+    sessionID: string;
+    channelID: string;
+    selfMute: boolean;
+    selfDeaf: boolean;
+    mute: boolean;
+    deaf: boolean;
+  }
 
   class Embed implements EmbedType {
     title?: string;
@@ -305,7 +317,8 @@ declare namespace Ruhs {
     guildCreate?: ((guild: Guild) => Promise<void> | void),
     guildCache?: ((guild: Guild) => Promise<void> | void),
     guildMemberAdd?: ((member: Member, guild: Guild) => Promise<void> | void),
-    messageCreate?: ((message: Message) => Promise<void> | void)
+    messageCreate?: ((message: Message) => Promise<void> | void),
+    voiceStateUpdate?: ((member: Member) => Promise<void> | void)
   });
 }
 
