@@ -7,6 +7,8 @@ const createPresence = require("./createPresence.js");
 const Collection = require("../utils/Collection.js");
 const request = require("../utils/request.js");
 
+const channelCreate = require("../methods/createChannel.js");
+
 const {cache} = require("../botProperties.js");
 
 const createGuild = (async(guildData) => {
@@ -150,6 +152,10 @@ const createGuild = (async(guildData) => {
 
   if(guildData.max_video_channel_users) {
     guild.maxVideoChannelUsers = guildData.max_video_channel_users;
+  }
+  
+  guild.createChannel = (data) => {
+    return channelCreate(guildData.id, data);
   }
 
   return guild;
