@@ -197,6 +197,18 @@ const createSocket = (async (token, clientOptions) => {
         if(eventHandlers.messageCreate) {
           await eventHandlers.messageCreate(message);
         }
+      } else if(wsData.t === "MESSAGE_UPDATE") {
+        const message = await createMessage(wsData.d);
+
+        if(eventHandlers.messageUpdate) {
+          await eventHandlers.messageUpdate(message);
+        }
+      } else if(wsData.t === "PRESENCE_UPDATE") {
+        const member = await createPresence(wsData.d);
+
+        if(eventHandlers.presenceUpdate) {
+          await eventHandlers.presenceUpdate(member);
+        }
       }
 
       lastSequence = wsData.s;
