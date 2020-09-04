@@ -1,11 +1,10 @@
 const ruhs = require("ruhs"); // Import ruhs module 
-const Collection = require("ruhs/src/utils/Collection") // Import ruhs cache collection
 const token = "TOKEN"; // Enter your DISCORD bot app token 
 const prefix = "!"; // Enter your DISCORD bot's prefix
 const fs = require("fs"); // Import fs
 
 ruhs.eventHandlers.ready = (() => {
-  ruhs.cache.commands = Collection(); // Create a commands cache 
+  ruhs.cache.commands = ruhs.Collection(); // Create a commands cache 
   const commands = fs.readdirSync("./commands").filter(file => file.endsWith(".js")); // We found the all commands
 
   for (const c of commands) {
