@@ -100,8 +100,8 @@ declare namespace Ruhs {
 
   interface Message {
     id: string;
-    channel: (() => Channel);
-    guild?: (() => Guild);
+    channel: Channel;
+    guild?: Guild;
     author: User;
     member: (() => Member | null);
     content: string;
@@ -279,13 +279,15 @@ declare namespace Ruhs {
 
   const Collection: CollectionType<unknown>;
 
-  const sendMessage: ((channelID: string, data: MessageContent) => Message);
-
   const setPresence: ((presence: PresenceOptions) => void);
 
-  const createClient: ((token: string, options: ClientOptions) => Promise<void>);
+  const createClient: ((token: string, options?: ClientOptions) => Promise<void>);
 
   const request: ((method: HTTPMethods, path: string, requestData?: object) => Promise<unknown>);
+
+  const sendMessage: ((channelID: string, data: MessageContent) => Promise<Message>);
+
+  const editMessage: ((channelID: string, messageID: string, data: MessageContent) => Promise<Message>);
 
 
   const cache: ({
