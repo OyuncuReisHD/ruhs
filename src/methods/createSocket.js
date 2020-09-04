@@ -8,6 +8,7 @@ const Collection = require("../utils/Collection.js");
 const createGuild = require("../structures/createGuild.js");
 const createMember = require("../structures/createMember.js");
 const createMessage = require("../structures/createMessage.js");
+const createVoiceState = require("../structures/createVoiceState.js");
 
 let erlpack, zlib;
 let wsObject = {};
@@ -182,6 +183,14 @@ const createSocket = (async (token, clientOptions) => {
         if(eventHandlers.guildMemberRemove) {
           await eventHandlers.guildMemberRemove(member, guild);
         }
+      } else if(wsData.t === "VOICE_STATE_UPDATE") {
+
+        const data = await createVoiceState(wsData.d)
+
+        if(eventHandlers.voiceStateUpdate) {
+          await eventHandlers.voiceStateUpdate(data);
+        }
+
       } else if(wsData.t === "MESSAGE_CREATE") {
         const message = await createMessage(wsData.d);
 
