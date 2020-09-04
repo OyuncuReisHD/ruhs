@@ -2,6 +2,7 @@ const createMember = require("./createMember.js");
 const createRole = require("./createRole.js");
 const createChannel = require("./createChannel.js");
 const createEmoji = require("./createEmoji.js");
+const createPresence = require("./createPresence.js");
 
 const Collection = require("../utils/Collection.js");
 const request = require("../utils/request.js");
@@ -93,7 +94,6 @@ const createGuild = (async(guildData) => {
 
   guild.memberCount = guildData.member_count;
   guild.voiceStates = guildData.voice_states; // voiceState structure
-  guild.members = members;
 
   guild.channels = guildData.channels.map((channel) => channel.id);
 
@@ -101,7 +101,16 @@ const createGuild = (async(guildData) => {
     cache.channels.set(guildData.channels[i].id, createChannel(guildData.channels[i]));
   }
 
-  guild.presences = guildData.presences; // presence structure
+  const presences = [];
+  guildData.presences.forEach((p) => {
+    const presence = createPresence(p);
+    presence.user = members.get(p.user.id).user;
+    presences.push(presence);
+    members.set(presence.user.id, presence);
+  });
+  guild.presences = presences;
+
+  guild.members = members;
 
   if(guildData.max_presences) {
     guild.maxPresences = guild.max_presences;

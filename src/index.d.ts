@@ -85,7 +85,7 @@ declare namespace Ruhs {
     voiceStates: unknown; // voice state structure
     memberCount: number;
     channels: string[];
-    presences: unknown; // presence structure
+    presences: Presence[];
     maxPresences?: number;
     maxMembers?: number;
     vanityCode?: string;
@@ -119,6 +119,42 @@ declare namespace Ruhs {
     nonce: number | string;
     pinned: boolean;
     type: MessageType;
+  }
+
+  interface Activity {
+    name: string;
+    type: PresenceTypes;
+    url?: string;
+    createdAt: Date;
+    timestamps?: {
+      start?: number;
+      end?: number;
+    };
+    details?: string;
+    state?: string;
+    emoji?: Emoji;
+    assets?: {
+      largeImage: string,
+      largeText: string,
+      smallImage: string,
+      smallText: string
+    }
+  }
+
+  interface Presence {
+    user: User;
+    roles: string[];
+    game: Activity;
+    guild: Guild;
+    status: string;
+    activities: Activity[];
+    clientStatus: {
+      desktop: boolean;
+      mobile: boolean;
+      web: boolean;
+    };
+    premiumSince: number;
+    nick?: string;
   }
 
 
@@ -257,7 +293,7 @@ declare namespace Ruhs {
     tts?: boolean;
   });
 
-  type PresenceTypes = "gaming" | "listening" | "streaming";
+  type PresenceTypes = "gaming" | "listening" | "streaming" | "custom";
 
   type PresenceStatuses = "online" | "dnd" | "idle" | "invisible" | "offline";
 
