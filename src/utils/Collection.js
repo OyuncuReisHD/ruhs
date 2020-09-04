@@ -78,6 +78,14 @@ const Collection = ((collectionData = [], parameter = "id") => {
     });
   });
 
+  base.find = ((fn) => {
+    return base.filter(fn)[0];
+  });
+
+  base.some = ((fn) => {
+    return !!base.filter(fn)[0];
+  });
+
   return base;
 });
 

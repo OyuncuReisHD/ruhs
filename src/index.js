@@ -1,6 +1,7 @@
 const {cache, eventHandlers, botInfo} = require("./botProperties.js");
 
 const Collection = require("./utils/Collection.js");
+const Embed = require("./utils/Embed.js");
 const request = require("./utils/request.js");
 
 const createClient = require("./methods/createClient.js");
@@ -15,5 +16,6 @@ module.exports = ({
   botInfo,
   setPresence,
   Collection,
+  Embed,
   request
 });

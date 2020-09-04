@@ -33,14 +33,10 @@ const createMessage = (async(messageData) => {
 
   message.id = messageData.id;
 
-  message.channel = (() => {
-    return cache.channels.get(messageData.channel_id);
-  });
+  message.channel = cache.channels.get(messageData.channel_id);
 
   if(messageData.guild_id) {
-    message.guild = (() => {
-      return cache.guilds.get(messageData.guild_id);
-    });
+    message.guild = cache.guilds.get(messageData.guild_id);
   }
 
   message.author = createUser(messageData.author);
@@ -55,9 +51,9 @@ const createMessage = (async(messageData) => {
     }
   });
 
-  if(message.member() && message.guild && message.guild() && !message.guild().members.has(message.member().id)) {
+  if(message.member() && message.guild && !message.guild.members.has(message.member().id)) {
     const member = message.member();
-    message.guild().members.set(member.id, member);
+    message.guild.members.set(member.id, member);
   }
 
   message.content = messageData.content;

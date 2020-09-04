@@ -114,13 +114,12 @@ declare namespace Ruhs {
     rolesMentions: ReturnType<CollectionType<Role>>;
     channelMentions: ReturnType<CollectionType<Channel>>;
     attachments: unknown; // attachment structure
-    embeds: Embed[];
+    embeds: EmbedType[];
     reactions: unknown; // reaction structure
     nonce: number | string;
     pinned: boolean;
     type: MessageType;
   }
-
 
 
 
@@ -166,11 +165,11 @@ declare namespace Ruhs {
     inline?: boolean;
   }
 
-  interface Embed {
+  interface EmbedType {
     title?: string;
     description?: string;
     url?: string;
-    timestamp?: number;
+    timestamp?: string;
     color?: number;
     footer?: EmbedFooter;
     image?: EmbedImage;
@@ -178,6 +177,31 @@ declare namespace Ruhs {
     video?: EmbedVideo;
     author?: EmbedAuthor;
     fields: EmbedField[];
+  }
+
+  class Embed implements EmbedType {
+    title?: string;
+    description?: string;
+    url?: string;
+    timestamp?: string;
+    color?: number;
+    footer?: EmbedFooter;
+    image?: EmbedImage;
+    thumbnail?: EmbedThumbnail;
+    video?: EmbedVideo;
+    author?: EmbedAuthor;
+    fields: EmbedField[];
+
+    setURL: ((url: string) => Embed);
+    setTitle: ((title: string) => Embed);
+    setDescription: ((description: string) => Embed);
+    addField: ((name: string, value: string, inline?: boolean) => Embed);
+    setThumbnail: ((url: string) => Embed);
+    setImage: ((url: string) => Embed);
+    setTimestamp: ((timestamp: number) => Embed);
+    setColor: ((color: number) => Embed);
+    setAuthor: ((name: string, iconURL: string, url: string) => Embed);
+    setFooter: ((text: string, iconURL: string) => Embed);
   }
 
 
@@ -217,7 +241,7 @@ declare namespace Ruhs {
 
   type MessageContent = string | ({
     content?: string;
-    embed?: Embed;
+    embed?: EmbedType;
     tts?: boolean;
   });
 
@@ -243,11 +267,11 @@ declare namespace Ruhs {
   interface PresenceOptions {
     game?: {
       name: string;
-      type: PresenceTypes,
-      url?: string
-    },
-    afk?: boolean,
-    status?: PresenceStatuses
+      type: PresenceTypes;
+      url?: string;
+    };
+    afk?: boolean;
+    status?: PresenceStatuses;
   }
 
 

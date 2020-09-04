@@ -136,8 +136,8 @@ const createSocket = (async (token, clientOptions) => {
         cache.guilds = Collection(wsData.d.guilds, "id");
         botInfo.id = wsData.d.user.id;
 
-        if(eventHandlers.preReady) {
-          await eventHandlers.preReady();
+        if(eventHandlers.ready) {
+          await eventHandlers.ready();
         }
       } else if(wsData.t === "GUILD_CREATE") {
         if(cache.guilds.has(wsData.d.id)) {
@@ -161,14 +161,26 @@ const createSocket = (async (token, clientOptions) => {
         const guild = cache.guilds.get(wsData.d.guild_id);
         const member = createMember(wsData.d);
 
-        guild.members.set(wsData.d.user.id, guild);
+        guild.members.set(wsData.d.user.id, member);
 
         guild.memberCount += 1;
 
-        cache.guilds.set(wsData.d.guild_id, member);
+        cache.guilds.set(wsData.d.guild_id, guild);
 
         if(eventHandlers.guildMemberAdd) {
           await eventHandlers.guildMemberAdd(member, guild);
+        }
+      } else if(wsData.t === "GUILD_MEMBER_REMOVE") {
+        const guild = cache.guilds.get(wsData.d.guild_id);
+
+        guild.members.delete(wsData.d.user.id);
+
+        guild.memberCount -= 1;
+
+        cache.guilds.set(wsData.d.guild_id, guild);
+
+        if(eventHandlers.guildMemberRemove) {
+          await eventHandlers.guildMemberRemove(member, guild);
         }
       } else if(wsData.t === "MESSAGE_CREATE") {
         const message = await createMessage(wsData.d);
