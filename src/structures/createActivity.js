@@ -1,13 +1,14 @@
 const createEmoji = require("./createEmoji.js");
 
-const createActivity = (async (activityData) => {
+const createActivity = ((activityData) => {
   const presenceTypes = ({
     0: "playing",
     1: "streaming",
-    2: "listening"
+    2: "listening",
+    4: "custom"
   });
   const activity = {};
-
+  
   activity.name = activityData.name;
   activity.type = presenceTypes[activityData.type];
   
@@ -20,12 +21,14 @@ const createActivity = (async (activityData) => {
   activity.details = activityData.details || null;
   activity.state = activityData.state || null;
   activity.emoji = activityData.emoji ? createEmoji(activityData.emoji) : null;
-  activity.assets = {
-    largeImage: activityData.assets.large_image,
-    largeText: activityData.assets.large_text,
-    smallImage: activityData.assets.small_image,
-    smallText: activityData.assets.small_text
-  };
+  if (activityData.asset) {
+    activity.assets = {
+      largeImage: activityData.assets.hasOwnProperty("large_image") ? activityData.assets.large_image : null,
+      largeText: activityData.assets.hasOwnProperty("large_text") ? activityData.assets.large_text : null,
+      smallImage: activityData.assets.hasOwnProperty("small_image") ? activityData.assets.small_image : null,
+      smallText: activityData.assets.hasOwnProperty("small_text") ? activityData.assets.small_text : null
+    };
+  }
 
   return activity;
 });
