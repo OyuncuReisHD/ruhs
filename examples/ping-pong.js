@@ -3,7 +3,7 @@ const token = "TOKEN"; // Enter your DISCORD bot app token
 
 ruhs.eventHandlers.messageCreate = ((message) => { // Create the messageCreate event
   if (message.content === "ping") { // Create a message content
-      ruhs.sendMessage(message.channel().id, "Pong!") // If the specified message content is "ping" send message
+      ruhs.sendMessage(message.channel.id, "Pong!") // If the specified message content is "ping" send message
   }
 });
 
