@@ -180,9 +180,9 @@ declare namespace Ruhs {
   }
   
   interface VoiceState {
-    channel: Channel;
     guild?: Guild;
     member?: Member;
+    user?: User;
     sessionID: string;
     channelID: string;
     selfMute: boolean;
