@@ -281,7 +281,7 @@ declare namespace Ruhs {
     tts?: boolean;
   });
 
-  type PresenceTypes = "gaming" | "listening" | "streaming";
+  type PresenceTypes = "gaming" | "listening" | "streaming" | "custom";
 
   type PresenceStatuses = "online" | "dnd" | "idle" | "invisible" | "offline";
 
@@ -319,7 +319,7 @@ declare namespace Ruhs {
 
   const setPresence: ((presence: PresenceOptions) => void);
 
-  const createClient: ((token: string, options: ClientOptions) => Promise<void>);
+  const createClient: ((token: string, options?: ClientOptions) => Promise<void>);
 
   const request: ((method: HTTPMethods, path: string, requestData?: object) => Promise<unknown>);
 
