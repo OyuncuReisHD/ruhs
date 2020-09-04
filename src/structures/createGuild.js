@@ -94,7 +94,6 @@ const createGuild = (async(guildData) => {
 
   guild.memberCount = guildData.member_count;
   guild.voiceStates = guildData.voice_states; // voiceState structure
-  guild.members = members;
 
   guild.channels = guildData.channels.map((channel) => channel.id);
 
@@ -102,8 +101,16 @@ const createGuild = (async(guildData) => {
     cache.channels.set(guildData.channels[i].id, createChannel(guildData.channels[i]));
   }
 
-  const presences = guildData.presences.map((p) => createPresence(p));
+  const presences = [];
+  guildData.presences.forEach((p) => {
+    const presence = createPresence(p);
+    presence.user = members.get(p.user.id).user;
+    presences.push(presence);
+    members.set(presence.user.id, presence);
+  });
   guild.presences = presences;
+
+  guild.members = members;
 
   if(guildData.max_presences) {
     guild.maxPresences = guild.max_presences;
