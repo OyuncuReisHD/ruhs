@@ -8,6 +8,10 @@ const createMember = require("./createMember.js");
 const createRole = require("./createRole.js");
 const createChannel = require("./createChannel.js");
 
+const pinMessage = require("../methods/pinMessage.js");
+const unpinMessage = require("../methods/pinMessage.js");
+const deleteMessage = require("../methods/deleteMessage.js");
+
 const assingMemberUser = ((userData) => {
   const memberData = userData.member;
   delete userData.member;
@@ -91,6 +95,18 @@ const createMessage = (async(messageData) => {
   }
 
   message.type = types[messageData.type];
+  
+  message.pin = () => {
+     return pinMessage(messageData.channel_id, messageData.id)
+  }
+  
+  message.unpin = () => {
+     return unpinMessage(messageData.channel_id, messageData.id)
+  }
+  
+  message.delete = () => {
+     return deleteMessage(messageData.channel_id, messageData.id)
+  }
 
   return message;
 });
