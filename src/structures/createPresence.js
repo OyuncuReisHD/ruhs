@@ -1,16 +1,20 @@
-const createUser = require("./createUser.js");
+const createActivity = require("./createActivity.js");
+
 const {cache} = require("../botProperties.js");
 
-const createPresence = (async (presenceData) => {
+const createPresence = ((presenceData) => {
   const presence = {};
-
-  presence.user = createUser(presenceData.user);
+  
   presence.roles = presenceData.roles;
 
-  const game = createActivity(presenceData.game);
-  presence.game = game;
+  if (presenceData.game) {
+    const game = createActivity(presenceData.game);
+    presence.game = game;
+  }
 
-  presence.guild = cache.guilds.get(presenceData.guild_id);
+  if (presenceData.guild_id) {
+    presence.guild = cache.guilds.get(presenceData.guild_id);
+  }
   presence.status = presenceData.status;
 
   const activities = presenceData.activities.map((a) => createActivity(a));
