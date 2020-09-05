@@ -8,6 +8,8 @@ const Collection = require("../utils/Collection.js");
 const createGuild = require("../structures/createGuild.js");
 const createMember = require("../structures/createMember.js");
 const createMessage = require("../structures/createMessage.js");
+const createPresence = require("../structures/createPresence.js");
+const createChannel = require("../structures/createChannel.js");
 const createVoiceState = require("../structures/createVoiceState.js");
 
 let erlpack, zlib;
@@ -195,34 +197,38 @@ const createSocket = (async (token, clientOptions) => {
           await eventHandlers.guildMemberRemove(member, guild);
         }
       } else if(wsData.t === "VOICE_STATE_UPDATE") {
-        const voiceState = await createVoiceState(wsData.d)
-
         if(eventHandlers.voiceStateUpdate) {
+          const voiceState = await createVoiceState(wsData.d);
+
           await eventHandlers.voiceStateUpdate(voiceState);
         }
       } else if(wsData.t === "MESSAGE_CREATE") {
-        const message = await createMessage(wsData.d);
-
         if(eventHandlers.messageCreate) {
+          const message = await createMessage(wsData.d);
+
           await eventHandlers.messageCreate(message);
         }
       } else if(wsData.t === "MESSAGE_UPDATE") {
-        const message = await createMessage(wsData.d);
-
         if(eventHandlers.messageUpdate) {
+          const message = await createMessage(wsData.d);
+
           await eventHandlers.messageUpdate(message);
         }
       } else if(wsData.t === "PRESENCE_UPDATE") {
-        const member = await createPresence(wsData.d);
-
         if(eventHandlers.presenceUpdate) {
-          await eventHandlers.presenceUpdate(member);
+          const presence = await createPresence(wsData.d);
+
+          await eventHandlers.presenceUpdate(presence);
         }
       } else if(wsData.t === "CHANNEL_CREATE") {
         const channel = await createChannel(wsData.d);
 
         if(wsData.d.guild_id) {
-          cache.guilds.set(wsData.d.guild_id, channel);
+          const guild = cache.guilds.get(wsData.d.guild_id);
+
+          guild.channels.push(wsData.d.id);
+
+          cache.guilds.set(wsData.d.guild_id, guild);
         }
 
         cache.channels.set(channel.id, channel);
@@ -231,13 +237,10 @@ const createSocket = (async (token, clientOptions) => {
           await eventHandlers.channelCreate(channel);
         }
       } else if(wsData.t === "CHANNEL_UPDATE") {
-        const guild = cache.guilds.get(wsData.d.guild_id);
         const newChannel = await createChannel(wsData.d);
-        const oldChannel = guild.channels.get(wsData.d.id);
+        const oldChannel = cache.channels.get(wsData.d.id);
 
-        guild.channels.set(newChannel.id, newChannel);
-
-        cache.guilds.set(guild.id, guild);
+        cache.channels.set(newChannel.id, newChannel);
 
         if(eventHandlers.channelUpdate) {
           await eventHandlers.channelUpdate(oldChannel, newChannel)

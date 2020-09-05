@@ -17,7 +17,9 @@ const createPresence = ((presenceData) => {
     web: !!presenceData.client_status.web
   });
 
-  presence.member = cache.guilds.get(presenceData.guild_id).members.get(presenceData.user.id);
+  if(presenceData.guild_id) {
+    presence.member = cache.guilds.get(presenceData.guild_id).members.get(presenceData.user.id);
+  }
 
   return presence;
 });

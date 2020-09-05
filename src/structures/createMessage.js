@@ -66,8 +66,14 @@ const createMessage = (async(messageData) => {
 
   message.tts = messageData.tts;
   message.mentionedEveryone = messageData.mention_everyone;
-  message.mentions = Collection(messageData.mentions.map((mentionData) => mentionData.member ? createMember(assingMemberUser(mentionData)) : createUser(mentionData)), "id");
-  message.rolesMentions = Collection(messageData.mention_roles.map((roleData) => createRole(roleData)), "id");
+
+  if(messageData.mentions) {
+    message.mentions = Collection(messageData.mentions.map((mentionData) => mentionData.member ? createMember(assingMemberUser(mentionData)) : createUser(mentionData)), "id");
+  }
+
+  if(messageData.mention_roles) {
+    message.rolesMentions = Collection(messageData.mention_roles.map((roleData) => createRole(roleData)), "id");
+  }
 
   if(messageData.mention_channels) {
     message.channelsMentions = Collection(messageData.mention_channels.map((channelData) => createChannel(channelData)), "id");

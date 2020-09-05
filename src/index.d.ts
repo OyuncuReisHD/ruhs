@@ -111,9 +111,9 @@ declare namespace Ruhs {
     editedAt?: Date;
     tts: boolean;
     mentionedEveryone: boolean;
-    mentions: ReturnType<CollectionType<(Member | User)>>;
-    rolesMentions: ReturnType<CollectionType<Role>>;
-    channelMentions: ReturnType<CollectionType<Channel>>;
+    mentions?: ReturnType<CollectionType<(Member | User)>>;
+    rolesMentions?: ReturnType<CollectionType<Role>>;
+    channelMentions?: ReturnType<CollectionType<Channel>>;
     attachments: unknown; // attachment structure
     embeds: EmbedType[];
     reactions: unknown; // reaction structure
