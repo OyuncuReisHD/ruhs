@@ -90,6 +90,7 @@ const createSocket = (async (token, clientOptions) => {
       	"d": lastSequence
       }));
       setInterval(() => {
+      	lastHeartbeat = Date.now();
         wsObject.ws.send(wsObject.pack({
           "op": 1,
           "d": lastSequence
