@@ -7,7 +7,8 @@ const cache = ({
 
 const botInfo = ({
   "id": "",
-  "token": ""
+  "token": "",
+  "pings": []
 });
 
 const eventHandlers = ({});

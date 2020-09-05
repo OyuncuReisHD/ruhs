@@ -7,6 +7,7 @@ const request = require("./utils/request.js");
 const createClient = require("./methods/createClient.js");
 const sendMessage = require("./methods/sendMessage.js");
 const setPresence = require("./methods/setPresence.js");
+const ping = require("./methods/ping.js");
 
 module.exports = ({
   createClient,
@@ -17,5 +18,6 @@ module.exports = ({
   setPresence,
   Collection,
   Embed,
-  request
+  request,
+  ping
 });

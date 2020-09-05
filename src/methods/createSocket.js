@@ -44,6 +44,7 @@ const createSocket = (async (token, clientOptions) => {
 
   let heartbeatInterval = 0;
   let lastSequence = null;
+  let lastHeartbeat = null;
 
   wsObject.ws = new WebSocket(gatewayURL + "?" + ("v=" + wsOptions.version) + "&" + ("encoding=" + wsOptions.encoding) + (wsOptions.compress ? "&compress=zlib-stream" : ""));
   wsObject.pack = wsOptions.encoding === "etf" ? erlpack.pack : JSON.stringify;
@@ -83,8 +84,13 @@ const createSocket = (async (token, clientOptions) => {
 
     if(wsData.op === 10) {
       heartbeatInterval = wsData.d.heartbeat_interval;
-
+      lastHeartbeat = Date.now();
+      wsObject.ws.send(wsObject.pack({
+      	"op": 1,
+      	"d": lastSequence
+      }));
       setInterval(() => {
+      	lastHeartbeat = Date.now();
         wsObject.ws.send(wsObject.pack({
           "op": 1,
           "d": lastSequence
@@ -128,6 +134,9 @@ const createSocket = (async (token, clientOptions) => {
       }
 
       wsObject.ws.send(wsObject.pack(identifyData));
+    } else if(wsData.op === 11) {
+    	botInfo.pings.unshift(Date.now()-lastHeartbeat);
+    	if(botInfo.pings.length > 3) botInfo.pings.length = 3;
     } else if(wsData.op === 0) {
       if(eventHandlers.rawWS) {
         await eventHandlers.rawWS(wsData);
