@@ -1,4 +1,6 @@
 const createUser = require("./createUser");
+const sendMessage = require("../methods/sendMessage.js");
+const deleteChannel = require("../methods/deleteChannel.js");
 
 const createChannel = ((channelData) => {
   const channel = {};
@@ -32,6 +34,14 @@ const createChannel = ((channelData) => {
     channel.recipients = channelData.recipients.map((recipient) => createUser(recipient));
   } else {
     channel.parentID = channelData.parent_id || null;
+  }
+  
+  channel.createMessage = (mesaj) => {
+    sendMessage(channelData.id, mesaj)
+  }
+
+  channel.delete = () => {
+    deleteChannel(channelData.id)
   }
 
   return channel;
