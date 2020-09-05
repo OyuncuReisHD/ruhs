@@ -4,13 +4,13 @@ const editMessage = (async (channelID, messageID, data) => {
   let message;
 
   if(typeof data !== "object") {
-    message = await request("PATCH", "/channels/" + channelID + "/messages/" + messageID, {
-      content: data 
+    message = await request("PATCH", `/channels/${channelID}/messages/${messageID}`, {
+      "content": data 
     });
   } else {
-    message = await request("PATCH", "/channels/" + channelID + "/messages/" + messageID, {
-      content: data.content || null,
-      embed: data.embed || null
+    message = await request("PATCH", `/channels/${channelID}/messages/${messageID}`, {
+      "content": data.content || null,
+      "embed": data.embed || null
     });
   }
 

@@ -103,7 +103,7 @@ const createSocket = (async (token, clientOptions) => {
         }
       };
 
-      const Intents = {
+      const Intents = ({
         "GUILDS": 1 << 0,
         "GUILD_MEMBERS": 1 << 1,
         "GUILD_BANS": 1 << 2,
@@ -119,7 +119,7 @@ const createSocket = (async (token, clientOptions) => {
         "DIRECT_MESSAGES": 1 << 12,
         "DIRECT_MESSAGE_REACTIONS": 1 << 13,
         "DIRECT_MESSAGE_TYPING": 1 << 14
-      };
+      });
 
       if(clientOptions.intents && Array.isArray(clientOptions.intents) &&(clientOptions.intents.length !== 0)) {
         identifyData.d.intents = clientOptions.intents.map((intent) => Intents[intent]).reduce((bits, next) => bits | next, 0);
@@ -163,9 +163,7 @@ const createSocket = (async (token, clientOptions) => {
         const member = createMember(wsData.d);
 
         guild.members.set(wsData.d.user.id, member);
-
         guild.memberCount += 1;
-
         cache.guilds.set(wsData.d.guild_id, guild);
 
         if(eventHandlers.guildMemberAdd) {
@@ -173,24 +171,21 @@ const createSocket = (async (token, clientOptions) => {
         }
       } else if(wsData.t === "GUILD_MEMBER_REMOVE") {
         const guild = cache.guilds.get(wsData.d.guild_id);
+        const member = createMember(cache.guild.members.get(wsData.d.user.id));
 
         guild.members.delete(wsData.d.user.id);
-
         guild.memberCount -= 1;
-
         cache.guilds.set(wsData.d.guild_id, guild);
 
         if(eventHandlers.guildMemberRemove) {
           await eventHandlers.guildMemberRemove(member, guild);
         }
       } else if(wsData.t === "VOICE_STATE_UPDATE") {
-
-        const data = await createVoiceState(wsData.d)
+        const voiceState = await createVoiceState(wsData.d)
 
         if(eventHandlers.voiceStateUpdate) {
-          await eventHandlers.voiceStateUpdate(data);
+          await eventHandlers.voiceStateUpdate(voiceState);
         }
-
       } else if(wsData.t === "MESSAGE_CREATE") {
         const message = await createMessage(wsData.d);
 
@@ -208,6 +203,18 @@ const createSocket = (async (token, clientOptions) => {
 
         if(eventHandlers.presenceUpdate) {
           await eventHandlers.presenceUpdate(member);
+        }
+      } else if(wsData.t === "CHANNEL_CREATE") {
+        const channel = await createChannel(wsData.d);
+
+        if(wsData.d.guild_id) {
+          cache.guilds.set(wsData.d.guild_id, channel);
+        }
+
+        cache.channels.set(channel.id, channel);
+
+        if(eventHandlers.channelCreate) {
+          await eventHandlers.channelCreate(channel);
         }
       }
 

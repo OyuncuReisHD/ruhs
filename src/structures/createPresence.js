@@ -6,19 +6,10 @@ const createPresence = ((presenceData) => {
   const presence = {};
   
   presence.roles = presenceData.roles;
-
-  if (presenceData.game) {
-    const game = createActivity(presenceData.game);
-    presence.game = game;
-  }
-
-  if (presenceData.guild_id) {
-    presence.guild = cache.guilds.get(presenceData.guild_id);
-  }
+  presence.game = presenceData.game ? createActivity(presenceData.game) : null;
+  presence.guildID = presenceData.guild_id;
   presence.status = presenceData.status;
-
-  const activities = presenceData.activities.map((a) => createActivity(a));
-  presence.activities = activities;
+  presence.activities = presenceData.activities.map((a) => createActivity(a));
 
   presence.clientStatus = ({
     desktop: !!presenceData.client_status.desktop,
@@ -26,8 +17,7 @@ const createPresence = ((presenceData) => {
     web: !!presenceData.client_status.web
   });
 
-  presence.premiumSince = presenceData.premium_since || null;
-  presence.nick = presenceData.nick || null;
+  presence.member = cache.guilds.get(presenceData.guild_id).members.get(presenceData.user.id);
 
   return presence;
 });

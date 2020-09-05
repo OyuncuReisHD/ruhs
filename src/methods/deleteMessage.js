@@ -1,5 +1,7 @@
 const request = require("../utils/request.js");
 
-module.exports = async function(channelID, messageID) {
-	await request("DELETE", "/channels/" + channelID + "/messages/" + messageID);
-}
+const deleteMessage = ((channelID, messageID) => {
+  await request("DELETE", `/channels/${channelID}/messages/${messageID}`);
+})
+
+module.exports = deleteMessage;

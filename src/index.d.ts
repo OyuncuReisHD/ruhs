@@ -124,37 +124,35 @@ declare namespace Ruhs {
   interface Activity {
     name: string;
     type: PresenceTypes;
-    url?: string;
+    url?: string | null;
     createdAt: Date;
     timestamps?: {
       start?: number;
       end?: number;
     };
-    details?: string;
-    state?: string;
-    emoji?: Emoji;
+    details?: string | null;
+    state?: string | null;
+    emoji?: Emoji | null;
     assets?: {
-      largeImage: string,
-      largeText: string,
-      smallImage: string,
-      smallText: string
+      largeImage: string | null;
+      largeText: string | null;
+      smallImage: string | null;
+      smallText: string | null;
     }
   }
 
   interface Presence {
-    user: User;
     roles: string[];
     game: Activity;
-    guild: Guild;
-    status: string;
+    guildID: string;
+    status: PresenceStatuses;
     activities: Activity[];
     clientStatus: {
       desktop: boolean;
       mobile: boolean;
       web: boolean;
     };
-    premiumSince: number;
-    nick?: string;
+    member: Member;
   }
 
 
@@ -326,16 +324,20 @@ declare namespace Ruhs {
 
 
   const Collection: CollectionType<unknown>;
-
-  const setPresence: ((presence: PresenceOptions) => void);
-
-  const createClient: ((token: string, options?: ClientOptions) => Promise<void>);
-
   const request: ((method: HTTPMethods, path: string, requestData?: object) => Promise<unknown>);
 
-  const sendMessage: ((channelID: string, data: MessageContent) => Promise<Message>);
 
+  const createClient: ((token: string, options?: ClientOptions) => Promise<void>);
+  const deleteChannel: ((channelID: string) => Promise<void>)
+  const deleteMessage: ((channelID: string, messageID: string) => Promise<void>);
   const editMessage: ((channelID: string, messageID: string, data: MessageContent) => Promise<Message>);
+  // fetchAuditLogs
+  const getPinnedMessages: ((channelID: string) => Promise<ReturnType<CollectionType<Channel>>>);
+  const pinMessage: ((channelID: string, messageID: string) => Promise<void>);
+  const sendMessage: ((channelID: string, data: MessageContent) => Promise<Message>);
+  const setPresence: ((presence: PresenceOptions) => void);
+  const unpinMessage: ((channelID: string, messageID: string) => Promise<void>);
+
 
 
   const cache: ({
@@ -353,8 +355,12 @@ declare namespace Ruhs {
     guildCreate?: ((guild: Guild) => Promise<void> | void),
     guildCache?: ((guild: Guild) => Promise<void> | void),
     guildMemberAdd?: ((member: Member, guild: Guild) => Promise<void> | void),
+    guildMemberRemove?: ((member: Member, guild: Guild) => Promise<void> | void),
+    voiceStateUpdate?: ((voiceState: VoiceState) => Promise<void> | void)
     messageCreate?: ((message: Message) => Promise<void> | void),
-    voiceStateUpdate?: ((member: Member) => Promise<void> | void)
+    messageUpdate?: ((message: Message) => Promise<void> | void),
+    presenceUpdate?: ((presence: Presence) => Promise<void> | void),
+    channelCreate?: ((channel: Channel) => Promise<void> | void),
   });
 }
 
