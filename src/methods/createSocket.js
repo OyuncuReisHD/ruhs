@@ -86,11 +86,13 @@ const createSocket = (async (token, clientOptions) => {
       heartbeatInterval = wsData.d.heartbeat_interval;
       lastHeartbeat = Date.now();
       wsObject.ws.send(wsObject.pack({
-      	"op": 1,
-      	"d": lastSequence
+        "op": 1,
+        "d": lastSequence
       }));
+
       setInterval(() => {
-      	lastHeartbeat = Date.now();
+        lastHeartbeat = Date.now();
+
         wsObject.ws.send(wsObject.pack({
           "op": 1,
           "d": lastSequence
@@ -135,8 +137,11 @@ const createSocket = (async (token, clientOptions) => {
 
       wsObject.ws.send(wsObject.pack(identifyData));
     } else if(wsData.op === 11) {
-    	botInfo.pings.unshift(Date.now()-lastHeartbeat);
-    	if(botInfo.pings.length > 3) botInfo.pings.length = 3;
+      botInfo.pings.unshift(Date.now() - lastHeartbeat);
+
+      if(botInfo.pings.length > 3) {
+        botInfo.pings.length = 3;
+      }
     } else if(wsData.op === 0) {
       if(eventHandlers.rawWS) {
         await eventHandlers.rawWS(wsData);
@@ -224,6 +229,18 @@ const createSocket = (async (token, clientOptions) => {
 
         if(eventHandlers.channelCreate) {
           await eventHandlers.channelCreate(channel);
+        }
+      } else if(wsData.t === "CHANNEL_UPDATE") {
+        const guild = cache.guilds.get(wsData.d.guild_id);
+        const newChannel = await createChannel(wsData.d);
+        const oldChannel = guild.channels.get(wsData.d.id);
+
+        guild.channels.set(newChannel.id, newChannel);
+
+        cache.guilds.set(guild.id, guild);
+
+        if(eventHandlers.channelUpdate) {
+          await eventHandlers.channelUpdate(oldChannel, newChannel)
         }
       }
 

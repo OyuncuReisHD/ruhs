@@ -9,6 +9,10 @@ const createChannel = ((channelData) => {
   channel.id = channelData.id;
   channel.type = types[channelData.type];
 
+  if(channelData.guild_id) {
+    channel.guildID = channelData.guild_id;
+  }
+
   if(channel.type !== "dm") {
     channel.position = channelData.position;
     channel.positionOverwrites = channelData.permission_overwrites; // overwrite structure
@@ -34,14 +38,6 @@ const createChannel = ((channelData) => {
     channel.recipients = channelData.recipients.map((recipient) => createUser(recipient));
   } else {
     channel.parentID = channelData.parent_id || null;
-  }
-  
-  channel.createMessage = (mesaj) => {
-    sendMessage(channelData.id, mesaj)
-  }
-
-  channel.delete = () => {
-    deleteChannel(channelData.id)
   }
 
   return channel;

@@ -43,6 +43,7 @@ declare namespace Ruhs {
   interface Channel {
     id: string;
     type: "text" | "dm" | "voice" | "group_dm" | "category" | "news" | "guild_store";
+    guildID?: string;
     position?: number;
     positionOverwrites?: unknown;
     name?: string;
@@ -348,19 +349,21 @@ declare namespace Ruhs {
   const botInfo: ({
     id: string;
     token: string;
+    pings: number[];
   });
 
   const eventHandlers: ({
-    ready?: (() => Promise<void> | void),
-    guildCreate?: ((guild: Guild) => Promise<void> | void),
-    guildCache?: ((guild: Guild) => Promise<void> | void),
-    guildMemberAdd?: ((member: Member, guild: Guild) => Promise<void> | void),
-    guildMemberRemove?: ((member: Member, guild: Guild) => Promise<void> | void),
-    voiceStateUpdate?: ((voiceState: VoiceState) => Promise<void> | void)
-    messageCreate?: ((message: Message) => Promise<void> | void),
-    messageUpdate?: ((message: Message) => Promise<void> | void),
-    presenceUpdate?: ((presence: Presence) => Promise<void> | void),
-    channelCreate?: ((channel: Channel) => Promise<void> | void),
+    ready?: (() => Promise<void> | void);
+    guildCreate?: ((guild: Guild) => Promise<void> | void);
+    guildCache?: ((guild: Guild) => Promise<void> | void);
+    guildMemberAdd?: ((member: Member, guild: Guild) => Promise<void> | void);
+    guildMemberRemove?: ((member: Member, guild: Guild) => Promise<void> | void);
+    voiceStateUpdate?: ((voiceState: VoiceState) => Promise<void> | void);
+    messageCreate?: ((message: Message) => Promise<void> | void);
+    messageUpdate?: ((message: Message) => Promise<void> | void);
+    presenceUpdate?: ((presence: Presence) => Promise<void> | void);
+    channelCreate?: ((channel: Channel) => Promise<void> | void);
+    channelUpdate?: ((oldChannel: Channel, newChannel: Channel) => Promise<void> | void);
   });
 }
 
