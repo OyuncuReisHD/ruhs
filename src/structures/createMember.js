@@ -1,6 +1,8 @@
-const createUser = require("./createUser.js");
-
 const createMember = ((memberData) => {
+  const createUser = require("./createUser.js");
+
+
+
   const member = {};
 
   member.id = memberData.user.id;

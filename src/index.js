@@ -1,3 +1,16 @@
+require("./structures/auditLog.js");
+require("./structures/createActivity.js");
+require("./structures/createAuditLog.js");
+require("./structures/createChannel.js");
+require("./structures/createEmoji.js");
+require("./structures/createGuild.js");
+require("./structures/createMember.js");
+require("./structures/createMessage.js");
+require("./structures/createPresence.js");
+require("./structures/createRole.js");
+require("./structures/createUser.js");
+require("./structures/createVoiceState.js");
+
 const {cache, eventHandlers, botInfo} = require("./botProperties.js");
 
 const Collection = require("./utils/Collection.js");

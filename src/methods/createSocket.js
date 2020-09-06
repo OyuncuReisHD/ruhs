@@ -1,21 +1,23 @@
-const WebSocket = require("ws");
-const Axios = require("axios");
-
-const {eventHandlers, cache, botInfo} = require("../botProperties.js");
-
-const Collection = require("../utils/Collection.js");
-
-const createGuild = require("../structures/createGuild.js");
-const createMember = require("../structures/createMember.js");
-const createMessage = require("../structures/createMessage.js");
-const createPresence = require("../structures/createPresence.js");
-const createChannel = require("../structures/createChannel.js");
-const createVoiceState = require("../structures/createVoiceState.js");
-
-let erlpack, zlib;
 let wsObject = {};
 
 const createSocket = (async (token, clientOptions) => {
+  const WebSocket = require("ws");
+  const Axios = require("axios");
+
+  const {eventHandlers, cache, botInfo} = require("../botProperties.js");
+
+  const Collection = require("../utils/Collection.js");
+
+  const createGuild = require("../structures/createGuild.js");
+  const createMember = require("../structures/createMember.js");
+  const createMessage = require("../structures/createMessage.js");
+  const createPresence = require("../structures/createPresence.js");
+  const createChannel = require("../structures/createChannel.js");
+  const createVoiceState = require("../structures/createVoiceState.js");
+
+  let erlpack, zlib;
+
+
   botInfo.token = token;
 
   const wsOptions = Object.assign({}, ({
@@ -187,7 +189,7 @@ const createSocket = (async (token, clientOptions) => {
         }
       } else if(wsData.t === "GUILD_MEMBER_REMOVE") {
         const guild = cache.guilds.get(wsData.d.guild_id);
-        const member = createMember(cache.guild.members.get(wsData.d.user.id));
+        const member = createMember(guild.members.get(wsData.d.user.id));
 
         guild.members.delete(wsData.d.user.id);
         guild.memberCount -= 1;
@@ -244,6 +246,13 @@ const createSocket = (async (token, clientOptions) => {
 
         if(eventHandlers.channelUpdate) {
           await eventHandlers.channelUpdate(oldChannel, newChannel)
+        }
+      } else if(wsData.t === "CHANNEL_DELETE") {
+        const channel = cache.channels.get(wsData.d.id);
+        cache.channels.delete(channel.id);
+
+        if(eventHandlers.channelDelete) {
+          await eventHandlers.channelDelete(channel);
         }
       }
 

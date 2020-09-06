@@ -1,15 +1,17 @@
-const createMember = require("./createMember.js");
-const createRole = require("./createRole.js");
-const createChannel = require("./createChannel.js");
-const createEmoji = require("./createEmoji.js");
-const createPresence = require("./createPresence.js");
-
-const Collection = require("../utils/Collection.js");
-const request = require("../utils/request.js");
-
-const {cache} = require("../botProperties.js");
-
 const createGuild = (async(guildData) => {
+  const createMember = require("./createMember.js");
+  const createRole = require("./createRole.js");
+  const createChannel = require("./createChannel.js");
+  const createEmoji = require("./createEmoji.js");
+  const createPresence = require("./createPresence.js");
+
+  const Collection = require("../utils/Collection.js");
+  const request = require("../utils/request.js");
+
+  const {cache} = require("../botProperties.js");
+
+
+
   const guild = {};
 
   const members = Collection();

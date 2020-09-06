@@ -1,34 +1,35 @@
-const {cache} = require("../botProperties.js");
+const createVoiceState = (async (voiceStateData) => {
+  const {cache} = require("../botProperties.js");
 
-const request = require("../utils/request.js");
+  const request = require("../utils/request.js");
 
-const createMember = require("./createMember.js");
-const createVoiceState = (async(data) => {
-  
-  const d = {};
+  const createMember = require("./createMember.js");
 
-  d.channel = cache.channels.get(data.channel_id);
 
-  if(data.guild_id) {
-    d.guild = cache.guilds.get(data.guild_id);
+
+  const voiceState = {};
+
+  voiceState.channel = cache.channels.get(voiceStateData.channel_id);
+
+  if(voiceStateData.guild_id) {
+    voiceState.guild = cache.guilds.get(voiceStateData.guild_id);
   }
   
-  if(data.member) {
-    d.member = createMember(data.member);
+  if(voiceStateData.member) {
+    d.member = createMember(voiceStateData.member);
   } else {
-    const user = await request("GET", "/users/" + data.user_id)
+    const user = await request("GET", `/users/${voiceStateData.user_id}`)
     d.user = createUser(user);
   }
 
-  d.sessionID = data.session_id;
-  d.selfMute = data.self_mute
-  d.selfDeaf = data.self_deaf
-  d.mute = data.mute
-  d.deaf = data.deaf
-  d.channelID = data.channel_id
+  voiceState.sessionID = voiceStateData.session_id;
+  voiceState.selfMute = voiceStateData.self_mute
+  voiceState.selfDeaf = voiceStateData.self_deaf
+  voiceState.mute = voiceStateData.mute
+  voiceState.deaf = voiceStateData.deaf
+  voiceState.channelID = voiceStateData.channel_id
 
-  return d;
-  
+  return voiceState;
 });
 
 module.exports = createVoiceState;

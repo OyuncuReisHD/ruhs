@@ -1,8 +1,10 @@
-const createActivity = require("./createActivity.js");
-
-const {cache} = require("../botProperties.js");
-
 const createPresence = ((presenceData) => {
+  const createActivity = require("./createActivity.js");
+
+  const {cache} = require("../botProperties.js");
+
+
+
   const presence = {};
   
   presence.roles = presenceData.roles;
