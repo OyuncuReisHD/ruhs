@@ -1,6 +1,6 @@
 const {cache} = require("../botProperties.js");
-
-const createMember = require("./createMember.js");
+const request = require("../utils/request.js")
+const createUser = require("./createUser.js");
 const actions = {
 	1: "GUILD_UPDATE",
 	10: "CHANNEL_CREATE",
@@ -39,18 +39,20 @@ const actions = {
 	82: "INTEGRATION_DELETE"
 }
 
-const createAuditLog = (async(data, guildID) => {
+const createAuditLog = (async(data) => {
 
 	const d = {};
 
 	d.id = data.id;
 
 	if(data.user_id) {
-		d.executor = cache.guilds.get(guildID).members.get(data.user_id);
+		var req = await request("GET", "/users/"+data.user_id)
+		d.executor = createUser(req);
 	}
 
 	if(data.target_id) {
-		d.target = cache.guilds.get(guildID).members.get(data.target_id);
+		var req = await request("GET", "/users/"+data.target_id)
+		d.target = createUser(req);
 	}
 
 	d.action = actions[data.action_type];
