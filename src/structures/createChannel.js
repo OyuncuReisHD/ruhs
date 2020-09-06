@@ -1,7 +1,5 @@
 const createChannel = ((channelData) => {
   const createUser = require("./createUser");
-  const sendMessage = require("../methods/sendMessage.js");
-  const deleteChannel = require("../methods/deleteChannel.js");
 
   const channel = {};
   const types = ["text", "dm", "voice", "group_dm", "category", "news", "guild_store"];
