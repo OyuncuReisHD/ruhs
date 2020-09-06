@@ -6,8 +6,7 @@ const sendWithWebhook = (async (webhookID, webhookToken, data) => {
         "avatar_url": data.avatar_url || false,
         "content": data.content,
         "embeds": data.embed || null,
-        "tts": data.tts || false,
-        "allowed_mentions": data.allowed_mentions || false
+        "tts": data.tts || false
     });
 
     return webhook
