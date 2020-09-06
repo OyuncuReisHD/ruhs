@@ -198,7 +198,6 @@ const createSocket = (async (token, clientOptions) => {
 
         const fetchAuditLogs = require("./fetchAuditLogs.js");
         const log = await fetchAuditLogs(guild.id, {limit:1}).then(x => x.entries.entries()[0][1]);
-        console.log(log)
         if(log.action === "MEMBER_KICK" && log.target.id === wsData.d.user.id) {
           if(eventHandlers.kickMember) {
             await eventHandlers.kickMember(member, guild);
