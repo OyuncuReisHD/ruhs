@@ -339,7 +339,9 @@ declare namespace Ruhs {
   const setPresence: ((presence: PresenceOptions) => void);
   const unpinMessage: ((channelID: string, messageID: string) => Promise<void>);
 
-
+  const addWebhook: ((channelID: string) => Promise<void>);
+  const deleteWebhook: ((webhookID: string) => Promise<void>);
+  const sendWithWebhook: ((webhookID: string, webhookToken: string, data: MessageContent) => Promise<Message>);
 
   const cache: ({
     guilds: ReturnType<CollectionType<Guild>>,
