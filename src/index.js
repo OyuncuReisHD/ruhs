@@ -8,6 +8,9 @@ const createClient = require("./methods/createClient.js");
 const sendMessage = require("./methods/sendMessage.js");
 const setPresence = require("./methods/setPresence.js");
 const ping = require("./methods/ping.js");
+const addWebhook = require("./methods/addWebhook.js");
+const deleteWebhook = require("./methods/deleteWebhook.js");
+const sendWithWebhook = require("./methods/sendWithWebhook.js");
 
 module.exports = ({
   createClient,
@@ -19,5 +22,8 @@ module.exports = ({
   Collection,
   Embed,
   request,
-  ping
+  ping,
+  addWebhook,
+  deleteWebhook,
+  sendWithWebhook
 });
