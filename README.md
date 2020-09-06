@@ -1,4 +1,4 @@
-![ruhsImage](https://cdn.discordapp.com/attachments/751536546578038874/752087133103063050/ruhs_1.png)
+![ruhsImage](https://cdn.discordapp.com/attachments/751536546578038874/752087414805364736/ruhs_2.png)
 
 # ruhs
 A lightweight Discord library for Node.
