@@ -1,3 +1,5 @@
+![ruhsImage](https://cdn.discordapp.com/attachments/751536546578038874/752087133103063050/ruhs_1.png)
+
 # ruhs
 A lightweight Discord library for Node.
 
@@ -7,7 +9,7 @@ A lightweight Discord library for Node.
 [![npm license](https://img.shields.io/npm/l/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
 [![CodeFactor](https://img.shields.io/codefactor/grade/github/acarnd03/ruhs?style=flat-square)](https://codefactor.io/repository/github/acarnd03/ruhs)
 
-[Site](https://acarnd03.gitbook.io/ruhs)
+[Website/Docs](https://acarnd03.gitbook.io/ruhs)
 
 ## Example code
 ```js
