@@ -36,7 +36,7 @@ const Collection = ((collectionData = [], parameter = "id") => {
 
     base.keys().forEach((altKey) => {
       if(key !== altKey) {
-        newData.push([key, base.get(key)]);
+        newData.push([altKey, base.get(altKey)]);
       }
     });
 

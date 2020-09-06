@@ -4,13 +4,9 @@ const createGuild = (async(guildData) => {
   const createChannel = require("./createChannel.js");
   const createEmoji = require("./createEmoji.js");
   const createPresence = require("./createPresence.js");
-
   const Collection = require("../utils/Collection.js");
   const request = require("../utils/request.js");
-
   const {cache} = require("../botProperties.js");
-
-
 
   const guild = {};
 

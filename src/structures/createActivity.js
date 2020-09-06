@@ -1,8 +1,6 @@
 const createActivity = ((activityData) => {
   const createEmoji = require("./createEmoji.js");
 
-
-
   const presenceTypes = ({
     0: "playing",
     1: "streaming",

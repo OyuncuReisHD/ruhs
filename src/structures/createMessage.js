@@ -7,18 +7,14 @@ const assingMemberUser = ((userData) => {
   }));
 });
 
-const createMessage = (async(messageData) => {
+const createMessage = (async (messageData) => {
   const {cache} = require("../botProperties.js");
-
   const Collection = require("../utils/Collection.js");
   const request = require("../utils/request.js");
-
   const createUser = require("./createUser.js");
   const createMember = require("./createMember.js");
   const createRole = require("./createRole.js");
   const createChannel = require("./createChannel.js");
-
-
 
   const types = ["DEFAULT", "RECIPIENT_ADD", "RECIPIENT_REMOVE", "CALL",
     "CHANNEL_NAME_CHANGE", "CHANNEL_ICON_CHANGE", "CHANNEL_PINNED_MESSAGE",

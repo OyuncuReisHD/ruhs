@@ -1,11 +1,7 @@
 const createVoiceState = (async (voiceStateData) => {
   const {cache} = require("../botProperties.js");
-
   const request = require("../utils/request.js");
-
   const createMember = require("./createMember.js");
-
-
 
   const voiceState = {};
 

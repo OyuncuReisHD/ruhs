@@ -6,7 +6,7 @@ const token = "";
 
 ruhs.eventHandlers.ready = (async () => {
   await promiseTimeout(1500);
-  await promiseTimeout(5000);
+  console.log(`Bot is ready with ${cache.guilds.size()} guilds.`);
 });
 
 

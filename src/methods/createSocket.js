@@ -219,7 +219,6 @@ const createSocket = (async (token, clientOptions) => {
       } else if(wsData.t === "PRESENCE_UPDATE") {
         if(eventHandlers.presenceUpdate) {
           const presence = await createPresence(wsData.d);
-
           await eventHandlers.presenceUpdate(presence);
         }
       } else if(wsData.t === "CHANNEL_CREATE") {
@@ -227,9 +226,7 @@ const createSocket = (async (token, clientOptions) => {
 
         if(wsData.d.guild_id) {
           const guild = cache.guilds.get(wsData.d.guild_id);
-
           guild.channels.push(wsData.d.id);
-
           cache.guilds.set(wsData.d.guild_id, guild);
         }
 
@@ -249,7 +246,14 @@ const createSocket = (async (token, clientOptions) => {
         }
       } else if(wsData.t === "CHANNEL_DELETE") {
         const channel = cache.channels.get(wsData.d.id);
-        cache.channels.delete(channel.id);
+
+        if(wsData.d.guild_id) {
+          const guild = cache.guilds.get(wsData.d.guild_id);
+          guild.channels = guild.channels.filter((channelID) => wsData.d.id !== channelID);
+          cache.guilds.set(wsData.d.guild_id, guild);
+        }
+
+        cache.channels.delete(wsData.d.id);
 
         if(eventHandlers.channelDelete) {
           await eventHandlers.channelDelete(channel);
