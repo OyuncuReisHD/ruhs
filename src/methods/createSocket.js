@@ -150,7 +150,6 @@ const createSocket = (async (token, clientOptions) => {
       if(eventHandlers.rawWS) {
         await eventHandlers.rawWS(wsData);
       }
-
       if(wsData.t === "READY") {
         cache.guilds = Collection(wsData.d.guilds, "id");
         botInfo.id = wsData.d.user.id;
@@ -191,13 +190,28 @@ const createSocket = (async (token, clientOptions) => {
         const guild = cache.guilds.get(wsData.d.guild_id);
         const member = createMember(guild.members.get(wsData.d.user.id));
 
-        guild.members.delete(wsData.d.user.id);
+        guild.members.filter((user) => user.user.id !== wsData.d.user.id)
         guild.memberCount -= 1;
         cache.guilds.set(wsData.d.guild_id, guild);
 
         if(eventHandlers.guildMemberRemove) {
           await eventHandlers.guildMemberRemove(member, guild);
         }
+
+        const fetchAuditLogs = require("./fetchAuditLogs.js");
+        const log = await fetchAuditLogs(guild.id, {limit:1}).then(x => x.entries.entries()[0][1]);
+        if(log.action === "MEMBER_KICK" && log.target.id === wsData.d.user.id) {
+          if(eventHandlers.kickMember) {
+            await eventHandlers.kickMember(member, guild);
+          }
+        }
+
+        if(log.action === "MEMBER_BAN_ADD" && log.target.id === wsData.d.user.id) {
+          if(eventHandlers.banMember) {
+            await eventHandlers.banMember(member, guild);
+          }
+        }
+
       } else if(wsData.t === "VOICE_STATE_UPDATE") {
         if(eventHandlers.voiceStateUpdate) {
           const voiceState = await createVoiceState(wsData.d);
@@ -257,6 +271,15 @@ const createSocket = (async (token, clientOptions) => {
 
         if(eventHandlers.channelDelete) {
           await eventHandlers.channelDelete(channel);
+      } else if(wsData.t === "GUILD_MEMBER_UPDATE") {
+        const guild = cache.guilds.get(wsData.d.guild_id);
+        const newMember = createMember(wsData.d);
+        const oldMember = guild.members.get(wsData.d.user.id);
+
+        guild.members.set(wsData.d.user.id, newMember);
+
+        if(eventHandlers.memberUpdate) {
+          await eventHandlers.memberUpdate(oldMember, newMember)
         }
       }
 
