@@ -1,6 +1,3 @@
-const {cache} = require("../botProperties.js");
-const request = require("../utils/request.js")
-const createUser = require("./createUser.js");
 const actions = {
 	1: "GUILD_UPDATE",
 	10: "CHANNEL_CREATE",
@@ -40,6 +37,9 @@ const actions = {
 }
 
 const createAuditLog = (async(data) => {
+  const {cache} = require("../botProperties.js");
+  const request = require("../utils/request.js")
+  const createUser = require("./createUser.js");
 
 	const d = {};
 

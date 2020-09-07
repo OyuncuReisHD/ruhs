@@ -1,5 +1,6 @@
 const createUser = ((userData) => {
   const user = {};
+
   if(typeof userData === "object") {
     user.id = userData.id;
     user.username = userData.username;

@@ -6,20 +6,38 @@
   "types": "./src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git://github.com/acarnd03/ruhs.git"
+    "url": "git://github.com/ruhsjs/ruhs.git"
   },
   "author": {
-    "name": "acarnd03",
-    "email": "acarnd03@gmail.com"
+    "name": "ruhsjs"
   },
+  "contributors": [
+    {
+      "name": "acarnd03",
+      "email": "acarnd03@gmail.com"
+    },
+    {
+      "name": "ceyrex20"
+    },
+    {
+      "name": "CroxyTheDev"
+    },
+    {
+      "name": "thevagus"
+    },
+    {
+      "name": "cembkoztekin"
+    }
+  ],
   "keywords": [
     "ruhs",
     "discord-api",
-    "node"
+    "node",
+    "ruhsjs"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/acarnd03/ruhs/issues"
+    "url": "https://github.com/ruhsjs/ruhs/issues"
   },
   "homepage": "https://acarnd03.gitbook.io/ruhs",
   "dependencies": {

@@ -275,6 +275,7 @@ declare namespace Ruhs {
     has: ((key: string) => boolean);
     get: ((key: string) => V | undefined);
     set: ((key: string, value: unknown) => void);
+    delete: ((key: string) => void);
     array: (() => V[] | undefined);
     keys: (() => string[]);
     entries: (() => [string, V | unknown][]);
@@ -364,6 +365,7 @@ declare namespace Ruhs {
     presenceUpdate?: ((presence: Presence) => Promise<void> | void);
     channelCreate?: ((channel: Channel) => Promise<void> | void);
     channelUpdate?: ((oldChannel: Channel, newChannel: Channel) => Promise<void> | void);
+    channelDelete?: ((channel: Channel) => Promise<void> | void);
   });
 }
 

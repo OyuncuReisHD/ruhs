@@ -68,7 +68,7 @@ class Embed {
   }
 
   setFooter(text, iconURL) {
-    this.footer.text = name;
+    this.footer.text = text;
     this.footer.icon_url = iconURL;
 
     return this; 

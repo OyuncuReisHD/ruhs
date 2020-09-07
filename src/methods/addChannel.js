@@ -1,8 +1,8 @@
-const request = require("../utils/request.js");
-
-const createChannel = require("../structures/createChannel.js");
-
 const addChannel = (async (guildID, data) => {
+  const request = require("../utils/request.js");
+  const createChannel = require("../structures/createChannel.js");
+
+
   let channel;
 
   if(data.type === "category") {
@@ -26,7 +26,7 @@ const addChannel = (async (guildID, data) => {
     });
   }
 
-  return channelCreate(channel);
+  return createChannel(channel);
 });
 
-module.exports = createChannel;
+module.exports = addChannel;
