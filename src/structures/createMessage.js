@@ -15,6 +15,7 @@ const createMessage = (async (messageData) => {
   const createMember = require("./createMember.js");
   const createRole = require("./createRole.js");
   const createChannel = require("./createChannel.js");
+  const createReaction = require("./createReaction.js");
 
   const types = ["DEFAULT", "RECIPIENT_ADD", "RECIPIENT_REMOVE", "CALL",
     "CHANNEL_NAME_CHANGE", "CHANNEL_ICON_CHANGE", "CHANNEL_PINNED_MESSAGE",
@@ -81,7 +82,7 @@ const createMessage = (async (messageData) => {
   message.embeds = messageData.embeds;
 
   if(messageData.reactions) {
-    message.reactions = messageData.reactions; // reaction structure
+    message.reactions = messageData.reactions.map((reactionData) => createReaction(reactionData)); // reaction structure
   }
 
   if(message.nonce) {

@@ -146,6 +146,8 @@ const createSocket = (async (token, clientOptions) => {
       if(botInfo.pings.length > 3) {
         botInfo.pings.length = 3;
       }
+
+      botInfo.ping = botInfo.pings.reduce((acc, curr) => (acc + curr), 0) / botInfo.pings.length;
     } else if(wsData.op === 0) {
       if(eventHandlers.rawWS) {
         await eventHandlers.rawWS(wsData);

@@ -1,31 +1,29 @@
-const {cache} = require("../botProperties.js");
-const request = require("../utils/request.js")
-const createUser = require("./createUser.js");
+const createInvite = ((inviteData) => {
+  const {cache} = require("../botProperties.js");
+  const request = require("../utils/request.js")
+  const createUser = require("./createUser.js");
 
-const createInvite = (async(data) => {
+  const invite = {};
 
-	const d = {};
+  invite.code = inviteData.code;
 
-	data = data[0]
+  if(invite.guild) {
+    invite.guild = cache.guilds.get(inviteData.guild.id);
+  }
 
-	d.guild = cache.guilds.get(data.guild.id);
+  if(invite.inviter) {
+    invite.inviter = createUser(inviteData.inviter);
+  }
 
-	if(data.inviter) {
-		var req = await request("GET", "/users/"+data.inviter.id)
-		d.inviter = createUser(req);
-	}
+  invite.channel = cache.channels.get(inviteData.channel.id);
 
-	if(data.channel) {
-		d.channel = cache.channels.get(data.channel.id);
-	}
+  invite.uses = inviteData.uses;
+  invite.maxUses = inviteData.max_uses;
+  invite.maxAge = inviteData.max_age;
+  invite.temporary = inviteData.temporary;
+  invite.createdAt = new Date(inviteData.created_at);
 
-	d.uses = data.uses;
-	d.max_uses = data.max_uses;
-	d.max_age = data.max_age;
-	d.temporary = data.temporary;
-	d.createdAt = data.created_at;
-
-	return d;
+  return invite;
 });
 
 module.exports = createInvite;

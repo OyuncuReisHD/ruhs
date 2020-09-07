@@ -1,9 +1,11 @@
-const request = require("../utils/request.js");
-const createInvites = require("../structures/createInvites.js");
-
 const getInvites = (async (guildID) => {
-  const req = await request("GET", `/guilds/${guildID}/invites`);
-  return await createInvites(req, guildID);
+  const request = require("../utils/request.js");
+  const Collection = require("../utils/Collection.js");
+  const createInvite = require("../structures/createInvite.js");
+
+  const invites = await request("GET", `/guilds/${guildID}/invites`);
+
+  return Collection(invites.map((inviteData) => createInvite(inviteData, guildID)), "code");
 });
 
 module.exports = getInvites;

@@ -341,6 +341,37 @@ declare namespace Ruhs {
   /* </Role> */
 
 
+  /* <Reaction> */
+  /* <Reaction> */
+
+  interface Reaction {
+    count: string;
+    me: boolean;
+    emoji: Emoji;
+  }
+
+  /* </Reaction> */
+  /* </Reaction> */
+
+  /* <Invite> */
+  /* <Invite> */
+
+  interface Invite {
+    code: string;
+    guild?: Guild;
+    inviter?: User;
+    channel: Channel;
+    user: number;
+    maxUses: number;
+    temporary: boolean;
+    createdAt: Date;
+  }
+
+  const getInvites: ((guildID: string) => Promise<ReturnType<CollectionType<Invite>>>);
+
+  /* </Invite> */
+  /* </Invite> */
+
   /* <Message> */
   /* <Message> */
 
@@ -375,7 +406,7 @@ declare namespace Ruhs {
     channelMentions?: ReturnType<CollectionType<Channel>>;
     attachments: unknown; // attachment structure
     embeds: EmbedType[];
-    reactions: unknown; // reaction structure
+    reactions: Reaction[];
     nonce: number | string;
     pinned: boolean;
     type: MessageType;
@@ -404,19 +435,24 @@ declare namespace Ruhs {
   const botInfo: ({
     id: string;
     token: string;
+    ping: number;
     pings: number[];
   });
 
   const eventHandlers: ({
     ready?: (() => Promise<void> | void);
+
     guildCreate?: ((guild: Guild) => Promise<void> | void);
     guildCache?: ((guild: Guild) => Promise<void> | void);
     guildMemberAdd?: ((member: Member, guild: Guild) => Promise<void> | void);
     guildMemberRemove?: ((member: Member, guild: Guild) => Promise<void> | void);
-    voiceStateUpdate?: ((voiceState: VoiceState) => Promise<void> | void);
+
     messageCreate?: ((message: Message) => Promise<void> | void);
     messageUpdate?: ((message: Message) => Promise<void> | void);
+
     presenceUpdate?: ((presence: Presence) => Promise<void> | void);
+    voiceStateUpdate?: ((voiceState: VoiceState) => Promise<void> | void);
+
     channelCreate?: ((channel: Channel) => Promise<void> | void);
     channelUpdate?: ((oldChannel: Channel, newChannel: Channel) => Promise<void> | void);
     channelDelete?: ((channel: Channel) => Promise<void> | void);

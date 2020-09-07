@@ -12,7 +12,7 @@ const Collection = ((collectionData = [], parameter = "id") => {
   });
 
   base.get = ((key) => {
-    return (base.has(key) ? data.find((d) => d[0] === key)[1]  : undefined);
+    return (base.has(key) ? data.find((d) => d[0] === key)[1] : undefined);
   });
 
   base.set = ((key, value) => {
