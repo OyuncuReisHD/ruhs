@@ -1,21 +1,23 @@
-const WebSocket = require("ws");
-const Axios = require("axios");
-
-const {eventHandlers, cache, botInfo} = require("../botProperties.js");
-
-const Collection = require("../utils/Collection.js");
-
-const createGuild = require("../structures/createGuild.js");
-const createMember = require("../structures/createMember.js");
-const createMessage = require("../structures/createMessage.js");
-const createPresence = require("../structures/createPresence.js");
-const createChannel = require("../structures/createChannel.js");
-const createVoiceState = require("../structures/createVoiceState.js");
-
-let erlpack, zlib;
 let wsObject = {};
 
 const createSocket = (async (token, clientOptions) => {
+  const WebSocket = require("ws");
+  const Axios = require("axios");
+
+  const {eventHandlers, cache, botInfo} = require("../botProperties.js");
+
+  const Collection = require("../utils/Collection.js");
+
+  const createGuild = require("../structures/createGuild.js");
+  const createMember = require("../structures/createMember.js");
+  const createMessage = require("../structures/createMessage.js");
+  const createPresence = require("../structures/createPresence.js");
+  const createChannel = require("../structures/createChannel.js");
+  const createVoiceState = require("../structures/createVoiceState.js");
+
+  let erlpack, zlib;
+
+
   botInfo.token = token;
 
   const wsOptions = Object.assign({}, ({
@@ -148,7 +150,6 @@ const createSocket = (async (token, clientOptions) => {
       if(eventHandlers.rawWS) {
         await eventHandlers.rawWS(wsData);
       }
-
       if(wsData.t === "READY") {
         cache.guilds = Collection(wsData.d.guilds, "id");
         botInfo.id = wsData.d.user.id;
@@ -187,15 +188,30 @@ const createSocket = (async (token, clientOptions) => {
         }
       } else if(wsData.t === "GUILD_MEMBER_REMOVE") {
         const guild = cache.guilds.get(wsData.d.guild_id);
-        const member = createMember(cache.guild.members.get(wsData.d.user.id));
+        const member = createMember(guild.members.get(wsData.d.user.id));
 
-        guild.members.delete(wsData.d.user.id);
+        guild.members.filter((user) => user.user.id !== wsData.d.user.id)
         guild.memberCount -= 1;
         cache.guilds.set(wsData.d.guild_id, guild);
 
         if(eventHandlers.guildMemberRemove) {
           await eventHandlers.guildMemberRemove(member, guild);
         }
+
+        const fetchAuditLogs = require("./fetchAuditLogs.js");
+        const log = await fetchAuditLogs(guild.id, {limit:1}).then(x => x.entries.entries()[0][1]);
+        if(log.action === "MEMBER_KICK" && log.target.id === wsData.d.user.id) {
+          if(eventHandlers.kickMember) {
+            await eventHandlers.kickMember(member, guild);
+          }
+        }
+
+        if(log.action === "MEMBER_BAN_ADD" && log.target.id === wsData.d.user.id) {
+          if(eventHandlers.banMember) {
+            await eventHandlers.banMember(member, guild);
+          }
+        }
+
       } else if(wsData.t === "VOICE_STATE_UPDATE") {
         if(eventHandlers.voiceStateUpdate) {
           const voiceState = await createVoiceState(wsData.d);
@@ -217,7 +233,6 @@ const createSocket = (async (token, clientOptions) => {
       } else if(wsData.t === "PRESENCE_UPDATE") {
         if(eventHandlers.presenceUpdate) {
           const presence = await createPresence(wsData.d);
-
           await eventHandlers.presenceUpdate(presence);
         }
       } else if(wsData.t === "CHANNEL_CREATE") {
@@ -225,9 +240,7 @@ const createSocket = (async (token, clientOptions) => {
 
         if(wsData.d.guild_id) {
           const guild = cache.guilds.get(wsData.d.guild_id);
-
           guild.channels.push(wsData.d.id);
-
           cache.guilds.set(wsData.d.guild_id, guild);
         }
 
@@ -244,6 +257,29 @@ const createSocket = (async (token, clientOptions) => {
 
         if(eventHandlers.channelUpdate) {
           await eventHandlers.channelUpdate(oldChannel, newChannel)
+        }
+      } else if(wsData.t === "CHANNEL_DELETE") {
+        const channel = cache.channels.get(wsData.d.id);
+
+        if(wsData.d.guild_id) {
+          const guild = cache.guilds.get(wsData.d.guild_id);
+          guild.channels = guild.channels.filter((channelID) => wsData.d.id !== channelID);
+          cache.guilds.set(wsData.d.guild_id, guild);
+        }
+
+        cache.channels.delete(wsData.d.id);
+
+        if(eventHandlers.channelDelete) {
+          await eventHandlers.channelDelete(channel);
+      } else if(wsData.t === "GUILD_MEMBER_UPDATE") {
+        const guild = cache.guilds.get(wsData.d.guild_id);
+        const newMember = createMember(wsData.d);
+        const oldMember = guild.members.get(wsData.d.user.id);
+
+        guild.members.set(wsData.d.user.id, newMember);
+
+        if(eventHandlers.memberUpdate) {
+          await eventHandlers.memberUpdate(oldMember, newMember)
         }
       }
 

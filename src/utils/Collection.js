@@ -1,5 +1,6 @@
 const Collection = ((collectionData = [], parameter = "id") => {
-  const data = collectionData.map((d, i) => [d[parameter] || i, d]);
+  let data = collectionData.map((d, i) => [d[parameter] || i, d]);
+
   const base = {};
 
   base.has = ((key) => {
@@ -24,6 +25,22 @@ const Collection = ((collectionData = [], parameter = "id") => {
     } else {
       data.push([key, value]);
     }
+  });
+
+  base.delete = ((key) => {
+    if(typeof key !== "string") {
+      throw new Error("First argument of delete method of Collection must be string.");
+    }
+
+    const newData = [];
+
+    base.keys().forEach((altKey) => {
+      if(key !== altKey) {
+        newData.push([altKey, base.get(altKey)]);
+      }
+    });
+
+    data = newData;
   });
 
   base.array = (() => {

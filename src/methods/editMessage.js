@@ -1,6 +1,7 @@
-const request = require("../utils/request.js");
-
 const editMessage = (async (channelID, messageID, data) => {
+  const request = require("../utils/request.js");
+
+
   let message;
 
   if(typeof data !== "object") {

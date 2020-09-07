@@ -1,4 +1,6 @@
-![ruhsImage](https://cdn.discordapp.com/attachments/751536546578038874/752087414805364736/ruhs_2.png)
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/751536546578038874/752087414805364736/ruhs_2.png" alt="ruhsLogo" />
+</p>
 
 # ruhs
 A lightweight Discord library for Node.
@@ -7,11 +9,11 @@ A lightweight Discord library for Node.
 [![npm version](https://img.shields.io/npm/v/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
 [![npm downloads](https://img.shields.io/npm/dt/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
 [![npm license](https://img.shields.io/npm/l/ruhs?style=flat-square)](https://npmjs.com/package/ruhs)
-[![CodeFactor](https://img.shields.io/codefactor/grade/github/acarnd03/ruhs?style=flat-square)](https://codefactor.io/repository/github/acarnd03/ruhs)
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/ruhsjs/ruhs?style=flat-square)](https://codefactor.io/repository/github/ruhsjs/ruhs)
 
 [Website/Docs](https://acarnd03.gitbook.io/ruhs)
 
-## Example code
+## Simple/example code
 ```js
 const ruhs = require("ruhs");
 const token = "your token";
@@ -33,3 +35,7 @@ ruhs.eventHandlers.messageCreate = ((message) => {
   });
 })();
 ```
+
+# Example bots / codes
++ [maven0571/ruhs-examples](https://github.com/maven0571/ruhs-examples)
++ [ruhs/examples](https://github.com/ruhs/examples)
