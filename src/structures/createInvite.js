@@ -2,7 +2,7 @@ const {cache} = require("../botProperties.js");
 const request = require("../utils/request.js")
 const createUser = require("./createUser.js");
 
-const createAuditLog = (async(data) => {
+const createInvite = (async(data) => {
 
 	const d = {};
 
@@ -28,4 +28,4 @@ const createAuditLog = (async(data) => {
 	return d;
 });
 
-module.exports = createAuditLog;
+module.exports = createInvite;
