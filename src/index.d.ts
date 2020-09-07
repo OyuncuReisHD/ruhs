@@ -18,17 +18,6 @@ declare namespace Ruhs {
     available?: boolean;
   }
 
-  interface Role {
-    id: string;
-    name: string;
-    color: number;
-    hoist: boolean;
-    position: number;
-    permissions: unknown;
-    managed: boolean;
-    mentionable: boolean;
-  }
-
   interface Member {
     id: string;
     user: User;
@@ -38,22 +27,6 @@ declare namespace Ruhs {
     premiumSince?: Date;
     deaf: boolean;
     mute: boolean;
-  }
-
-  interface Channel {
-    id: string;
-    type: "text" | "dm" | "voice" | "group_dm" | "category" | "news" | "guild_store";
-    guildID?: string;
-    position?: number;
-    positionOverwrites?: unknown;
-    name?: string;
-    topic?: string;
-    nsfw?: boolean;
-    bitrate?: boolean;
-    userLimit?: number;
-    rateLimitPerUser?: number;
-    recipients?: User[];
-    parentID: string | null;
   }
 
   interface Guild {
@@ -97,29 +70,6 @@ declare namespace Ruhs {
     preferredLocale: string;
     publicUpdatesChannelID?: string;
     maxVideoChannelUsers?: number;
-  }
-
-  interface Message {
-    id: string;
-    channel: Channel;
-    guild?: Guild;
-    author: User;
-    member: (() => Member | null);
-    content: string;
-    createdAt: Date;
-    edited: boolean;
-    editedAt?: Date;
-    tts: boolean;
-    mentionedEveryone: boolean;
-    mentions?: ReturnType<CollectionType<(Member | User)>>;
-    rolesMentions?: ReturnType<CollectionType<Role>>;
-    channelMentions?: ReturnType<CollectionType<Channel>>;
-    attachments: unknown; // attachment structure
-    embeds: EmbedType[];
-    reactions: unknown; // reaction structure
-    nonce: number | string;
-    pinned: boolean;
-    type: MessageType;
   }
 
   interface Activity {
@@ -263,14 +213,6 @@ declare namespace Ruhs {
     "GUILD_MESSAGES" | "GUILD_MESSAGE_REACTIONS" | "GUILD_MESSAGE_TYPING" |
     "DIRECT_MESSAGES" | "DIRECT_MESSAGE_REACTIONS" | "DIRECT_MESSAGE_TYPING";
 
-  type MessageType =
-    "DEFAULT" | "RECIPIENT_ADD" | "RECIPIENT_REMOVE" | "CALL" |
-    "CHANNEL_NAME_CHANGE" | "CHANNEL_ICON_CHANGE" | "CHANNEL_PINNED_MESSAGE" |
-    "GUILD_MEMBER_JOIN" | "USER_PREMIUM_GUILD_SUBSCRIPTION" | "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1" |
-    "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2" | "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3" |
-    "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3" | "CHANNEL_FOLLOW_ADD" | "GUILD_DISCOVERY_DISQUALIFIED" |
-    "GUILD_DISCOVERY_REQUALIFIED";
-
   type CollectionType<V> = ((collectionData: V[], key?: string) => {
     has: ((key: string) => boolean);
     get: ((key: string) => V | undefined);
@@ -285,12 +227,6 @@ declare namespace Ruhs {
     map: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => unknown)) => ReturnType<CollectionType<V | unknown>>);
     filter: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => boolean)) => ReturnType<CollectionType<V | unknown>>);
     forEach: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => void)) => Promise<void> | void);
-  });
-
-  type MessageContent = string | ({
-    content?: string;
-    embed?: EmbedType;
-    tts?: boolean;
   });
   
   type WebhookContent = string | ({
@@ -337,16 +273,124 @@ declare namespace Ruhs {
   const request: ((method: HTTPMethods, path: string, requestData?: object) => Promise<unknown>);
 
 
-  const createClient: ((token: string, options?: ClientOptions) => Promise<void>);
-  const deleteChannel: ((channelID: string) => Promise<void>)
+  /* <Channel> */
+  /* <Channel> */
+
+  interface ChannelData {
+    name: string;
+    type?: "text" | "voice" | "category";
+    topic?: string;
+    nsfw?: boolean;
+    rateLimitPerUser?: number;
+    bitrate?: number;
+    userLimit?: number;
+    position?: number;
+    permissionOverwrites?: unknown; // permission overwrite structure
+    parentID?: string;
+  }
+
+  interface Channel {
+    id: string;
+    type: "text" | "dm" | "voice" | "group_dm" | "category" | "news" | "guild_store";
+    guildID?: string;
+    position?: number;
+    positionOverwrites?: unknown; // permission overwrite structure
+    name?: string;
+    topic?: string;
+    nsfw?: boolean;
+    bitrate?: boolean;
+    userLimit?: number;
+    rateLimitPerUser?: number;
+    recipients?: User[];
+    parentID: string | null;
+  }
+
+  const addChannel: ((guildID: string, roleData: any) => Promise<Channel>);
+  const deleteChannel: ((guildID: string, roleData: any) => Promise<void>);
+
+  /* </Channel> */
+  /* </Channel> */
+
+
+  /* <Role> */
+  /* <Role> */
+
+  interface RoleData {
+    name?: string;
+    permissions?: unknown; // permissions
+    color?: number;
+    hoist?: boolean;
+    mentionable?: boolean;
+  }
+
+  interface Role {
+    id: string;
+    name: string;
+    color: number;
+    hoist: boolean;
+    position: number;
+    permissions: unknown;
+    managed: boolean;
+    mentionable: boolean;
+  }
+
+  const addRole: ((guildID: string, roleData: any) => Promise<Role>);
+  const deleteRole: ((guildID: string, roleID: string) => Promise<Role>);
+
+  /* </Role> */
+  /* </Role> */
+
+
+  /* <Message> */
+  /* <Message> */
+
+  type MessageType =
+    "DEFAULT" | "RECIPIENT_ADD" | "RECIPIENT_REMOVE" | "CALL" |
+    "CHANNEL_NAME_CHANGE" | "CHANNEL_ICON_CHANGE" | "CHANNEL_PINNED_MESSAGE" |
+    "GUILD_MEMBER_JOIN" | "USER_PREMIUM_GUILD_SUBSCRIPTION" | "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1" |
+    "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2" | "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3" |
+    "USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3" | "CHANNEL_FOLLOW_ADD" | "GUILD_DISCOVERY_DISQUALIFIED" |
+    "GUILD_DISCOVERY_REQUALIFIED";
+
+  type MessageContent = string | ({
+    content?: string;
+    embed?: EmbedType;
+    tts?: boolean;
+  });
+
+  interface Message {
+    id: string;
+    channel: Channel;
+    guild?: Guild;
+    author: User;
+    member: (() => Member | null);
+    content: string;
+    createdAt: Date;
+    edited: boolean;
+    editedAt?: Date;
+    tts: boolean;
+    mentionedEveryone: boolean;
+    mentions?: ReturnType<CollectionType<(Member | User)>>;
+    rolesMentions?: ReturnType<CollectionType<Role>>;
+    channelMentions?: ReturnType<CollectionType<Channel>>;
+    attachments: unknown; // attachment structure
+    embeds: EmbedType[];
+    reactions: unknown; // reaction structure
+    nonce: number | string;
+    pinned: boolean;
+    type: MessageType;
+  }
+
   const deleteMessage: ((channelID: string, messageID: string) => Promise<void>);
   const editMessage: ((channelID: string, messageID: string, data: MessageContent) => Promise<Message>);
-  // fetchAuditLogs
+  const sendMessage: ((channelID: string, data: MessageContent) => Promise<Message>);
   const getPinnedMessages: ((channelID: string) => Promise<ReturnType<CollectionType<Channel>>>);
   const pinMessage: ((channelID: string, messageID: string) => Promise<void>);
-  const sendMessage: ((channelID: string, data: MessageContent) => Promise<Message>);
-  const setPresence: ((presence: PresenceOptions) => void);
   const unpinMessage: ((channelID: string, messageID: string) => Promise<void>);
+
+  const createClient: ((token: string, options?: ClientOptions) => Promise<void>);
+  // fetchAuditLogs
+  const setPresence: ((presence: PresenceOptions) => void);
 
   const addWebhook: ((channelID: string) => Promise<void>);
   const deleteWebhook: ((webhookID: string) => Promise<void>);

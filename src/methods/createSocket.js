@@ -271,6 +271,7 @@ const createSocket = (async (token, clientOptions) => {
 
         if(eventHandlers.channelDelete) {
           await eventHandlers.channelDelete(channel);
+        }
       } else if(wsData.t === "GUILD_MEMBER_UPDATE") {
         const guild = cache.guilds.get(wsData.d.guild_id);
         const newMember = createMember(wsData.d);
