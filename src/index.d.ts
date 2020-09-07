@@ -292,6 +292,14 @@ declare namespace Ruhs {
     embed?: EmbedType;
     tts?: boolean;
   });
+  
+  type WebhookContent = string | ({
+    username?: string;
+    avatarl_url?: string;
+    content?: string;
+    embeds?: EmbedType[];
+    tts?: boolean;
+  });
 
   type PresenceTypes = "gaming" | "listening" | "streaming" | "custom";
 
@@ -340,7 +348,9 @@ declare namespace Ruhs {
   const setPresence: ((presence: PresenceOptions) => void);
   const unpinMessage: ((channelID: string, messageID: string) => Promise<void>);
 
-
+  const addWebhook: ((channelID: string) => Promise<void>);
+  const deleteWebhook: ((webhookID: string) => Promise<void>);
+  const sendWithWebhook: ((webhookID: string, webhookToken: string, data: WebhookContent) => Promise<Message>);
 
   const cache: ({
     guilds: ReturnType<CollectionType<Guild>>,

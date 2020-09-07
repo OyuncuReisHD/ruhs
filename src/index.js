@@ -28,7 +28,13 @@ const getPinnedMessages = require("./methods/getPinnedMessages.js");
 const pinMessage = require("./methods/pinMessage.js");
 const sendMessage = require("./methods/sendMessage.js");
 const setPresence = require("./methods/setPresence.js");
+
+const ping = require("./methods/ping.js");
+const addWebhook = require("./methods/addWebhook.js");
+const deleteWebhook = require("./methods/deleteWebhook.js");
+const sendWithWebhook = require("./methods/sendWithWebhook.js");
 const unpinMessage = require("./methods/unpinMessage.js");
+
 
 module.exports = ({
   cache,
@@ -38,7 +44,10 @@ module.exports = ({
   Collection,
   Embed,
   request,
-
+  ping,
+  addWebhook,
+  deleteWebhook,
+  sendWithWebhook,
   addChannel,
   createClient,
   deleteChannel,
