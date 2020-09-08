@@ -1,5 +1,5 @@
-const auditLog = (async(data, guildID) => {
-  const {cache} = require("../botProperties.js");
+const auditLog = (async (data, guildID) => {
+  const { cache } = require("../botProperties.js");
   const Collection = require("../utils/Collection.js");
   const createAuditLog = require("./createAuditLog.js");
 

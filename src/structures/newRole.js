@@ -1,4 +1,4 @@
-const createRole = ((roleData) => {
+const newRole = ((roleData) => {
   const role = {};
 
   role.id = roleData.id;
@@ -13,4 +13,4 @@ const createRole = ((roleData) => {
   return role;
 });
 
-module.exports = createRole;
+module.exports = newRole;

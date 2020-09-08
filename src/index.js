@@ -1,4 +1,4 @@
-const {cache, eventHandlers, botInfo} = require("./botProperties.js");
+const { cache, eventHandlers, botInfo } = require("./botProperties.js");
 
 
 const Collection = require("./utils/Collection.js");
@@ -6,11 +6,14 @@ const Embed = require("./utils/Embed.js");
 const request = require("./utils/request.js");
 
 
-const addChannel = require("./methods/addChannel.js");
+const createChannel = require("./methods/createChannel.js");
 const deleteChannel = require("./methods/deleteChannel.js");
 
-const addRole = require("./methods/addRole.js");
+const createRole = require("./methods/createRole.js");
 const deleteRole = require("./methods/deleteRole.js");
+
+const createReaction = require("./methods/createReaction.js");
+const deleteReaction = require("./methods/deleteReaction.js");
 
 const getInvites = require("./methods/getInvites.js");
 
@@ -42,11 +45,14 @@ module.exports = ({
   request,
 
 
-  addChannel,
+  createChannel,
   deleteChannel,
 
-  addRole,
+  createRole,
   deleteRole,
+
+  createReaction,
+  deleteReaction,
 
   getInvites,
 

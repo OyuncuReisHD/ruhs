@@ -1,6 +1,6 @@
-const {wsObject} = require("./createSocket.js");
-
 const setPresence = ((presenceData) => {
+  const { wsObject } = require("./createSocket.js");
+
   const presenceTypes = ({
     "playing": 0,
     "streaming": 1,
@@ -9,12 +9,12 @@ const setPresence = ((presenceData) => {
 
   const presence = {};
 
-  if(presenceData.game) {
+  if (presenceData.game) {
     presence.game = {};
     presence.game.name = presenceData.game.name;
     presence.game.type = presenceTypes[presenceData.game.type];
 
-    if(presenceData.game.url) {
+    if (presenceData.game.url) {
       presence.game.url = presenceData.game.url;
     }
   } else {

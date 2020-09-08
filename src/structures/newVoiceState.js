@@ -1,21 +1,22 @@
-const createVoiceState = (async (voiceStateData) => {
-  const {cache} = require("../botProperties.js");
+const newVoiceState = (async (voiceStateData) => {
+  const { cache } = require("../botProperties.js");
   const request = require("../utils/request.js");
-  const createMember = require("./createMember.js");
+  const newMember = require("./newMember.js");
+  const newUser = require("./newUser.js");
 
   const voiceState = {};
 
   voiceState.channel = cache.channels.get(voiceStateData.channel_id);
 
-  if(voiceStateData.guild_id) {
+  if (voiceStateData.guild_id) {
     voiceState.guild = cache.guilds.get(voiceStateData.guild_id);
   }
-  
-  if(voiceStateData.member) {
-    d.member = createMember(voiceStateData.member);
+
+  if (voiceStateData.member) {
+    d.member = newMember(voiceStateData.member);
   } else {
     const user = await request("GET", `/users/${voiceStateData.user_id}`)
-    d.user = createUser(user);
+    d.user = newUser(user);
   }
 
   voiceState.sessionID = voiceStateData.session_id;
@@ -28,4 +29,4 @@ const createVoiceState = (async (voiceStateData) => {
   return voiceState;
 });
 
-module.exports = createVoiceState;
+module.exports = newVoiceState;

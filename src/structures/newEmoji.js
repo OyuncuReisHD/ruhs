@@ -1,34 +1,34 @@
-const createEmoji = ((emojiData) => {
+const newEmoji = ((emojiData) => {
   const emoji = {};
 
   emoji.id = emojiData.id || null;
   emoji.name = emojiData.name || null;
 
-  if(emojiData.roles) {
+  if (emojiData.roles) {
     emoji.roles = emojiData.roles;
   }
 
-  if(emojiData.user) {
+  if (emojiData.user) {
     emoji.user = createUser(emojiData.user);
   }
 
-  if(emojiData.require_colons) {
+  if (emojiData.require_colons) {
     emoji.requireColons = emojiData.require_colons;
   }
 
-  if(emojiData.managed) {
+  if (emojiData.managed) {
     emoji.managed = emojiData.managed;
   }
 
-  if(emojiData.animated) {
+  if (emojiData.animated) {
     emoji.animated = emojiData.animated;
   }
 
-  if(emojiData.available) {
+  if (emojiData.available) {
     emoji.available = emojiData.available;
   }
 
   return emoji;
 });
 
-module.exports = createEmoji;
+module.exports = newEmoji;

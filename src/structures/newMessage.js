@@ -7,15 +7,15 @@ const assingMemberUser = ((userData) => {
   }));
 });
 
-const createMessage = (async (messageData) => {
-  const {cache} = require("../botProperties.js");
+const newMessage = (async (messageData) => {
+  const { cache } = require("../botProperties.js");
   const Collection = require("../utils/Collection.js");
   const request = require("../utils/request.js");
-  const createUser = require("./createUser.js");
-  const createMember = require("./createMember.js");
-  const createRole = require("./createRole.js");
-  const createChannel = require("./createChannel.js");
-  const createReaction = require("./createReaction.js");
+  const newUser = require("./newUser.js");
+  const newMember = require("./newMember.js");
+  const newRole = require("./newRole.js");
+  const newChannel = require("./newChannel.js");
+  const newReaction = require("./newReaction.js");
 
   const types = ["DEFAULT", "RECIPIENT_ADD", "RECIPIENT_REMOVE", "CALL",
     "CHANNEL_NAME_CHANGE", "CHANNEL_ICON_CHANGE", "CHANNEL_PINNED_MESSAGE",
@@ -25,24 +25,24 @@ const createMessage = (async (messageData) => {
 
   const message = {};
 
-  if(!cache.channels.has(messageData.channel_id)) {
-    const channelData = await request("GET", "/channels/" + messageData.channel_id);
-    cache.channels.set(messageData.channel_id, createChannel(channelData));
+  if (!cache.channels.has(messageData.channel_id)) {
+    const channelData = await request("GET", `/channels/${messageData.channel_id}`);
+    cache.channels.set(messageData.channel_id, newChannel(channelData));
   }
 
   message.id = messageData.id;
 
   message.channel = cache.channels.get(messageData.channel_id);
 
-  if(messageData.guild_id) {
+  if (messageData.guild_id) {
     message.guild = cache.guilds.get(messageData.guild_id);
   }
 
-  message.author = createUser(messageData.author);
+  message.author = newUser(messageData.author);
 
   message.member = (() => {
-    if(messageData.member) {
-      return createMember(Object.assign({}, messageData.member, {
+    if (messageData.member) {
+      return newMember(Object.assign({}, messageData.member, {
         user: messageData.author
       }));
     } else {
@@ -50,48 +50,48 @@ const createMessage = (async (messageData) => {
     }
   });
 
-  if(message.member() && message.guild && !message.guild.members.has(message.member().id)) {
+  if (message.member() && message.guild && !message.guild.members.has(message.member().id)) {
     const member = message.member();
     message.guild.members.set(member.id, member);
   }
 
   message.content = messageData.content;
-  message.createdAt = new Date(messageData.timestamp);
+  message.newdAt = new Date(messageData.timestamp);
   message.edited = !!messageData.edited_timestamp;
 
-  if(message.edited) {
+  if (message.edited) {
     message.editedAt = new Date(messageData.edited_timestamp);
   }
 
   message.tts = messageData.tts;
   message.mentionedEveryone = messageData.mention_everyone;
 
-  if(messageData.mentions) {
-    message.mentions = Collection(messageData.mentions.map((mentionData) => mentionData.member ? createMember(assingMemberUser(mentionData)) : createUser(mentionData)), "id");
+  if (messageData.mentions) {
+    message.mentions = Collection(messageData.mentions.map((mentionData) => mentionData.member ? newMember(assingMemberUser(mentionData)) : newUser(mentionData)), "id");
   }
 
-  if(messageData.mention_roles) {
-    message.rolesMentions = Collection(messageData.mention_roles.map((roleData) => createRole(roleData)), "id");
+  if (messageData.mention_roles) {
+    message.rolesMentions = Collection(messageData.mention_roles.map((roleData) => newRole(roleData)), "id");
   }
 
-  if(messageData.mention_channels) {
-    message.channelsMentions = Collection(messageData.mention_channels.map((channelData) => createChannel(channelData)), "id");
+  if (messageData.mention_channels) {
+    message.channelsMentions = Collection(messageData.mention_channels.map((channelData) => newChannel(channelData)), "id");
   }
 
   message.attachments = messageData.attachments; // attachment structure
   message.embeds = messageData.embeds;
 
-  if(messageData.reactions) {
-    message.reactions = messageData.reactions.map((reactionData) => createReaction(reactionData)); // reaction structure
+  if (messageData.reactions) {
+    message.reactions = messageData.reactions.map((reactionData) => newReaction(reactionData));
   }
 
-  if(message.nonce) {
+  if (message.nonce) {
     message.nonce = messageData.nonce;
   }
 
   message.pinned = messageData.pinned;
 
-  if(messageData.webhook_id) {
+  if (messageData.webhook_id) {
     message.webhookID = messageData.webhook_id;
   }
 
@@ -100,4 +100,4 @@ const createMessage = (async (messageData) => {
   return message;
 });
 
-module.exports = createMessage;
+module.exports = newMessage;

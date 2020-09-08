@@ -36,27 +36,27 @@ const actions = {
 	82: "INTEGRATION_DELETE"
 }
 
-const createAuditLog = (async(data) => {
-  const {cache} = require("../botProperties.js");
-  const request = require("../utils/request.js")
-  const createUser = require("./createUser.js");
+const createAuditLog = (async (data) => {
+	const { cache } = require("../botProperties.js");
+	const request = require("../utils/request.js")
+	const createUser = require("./newUser.js");
 
 	const d = {};
 
 	d.id = data.id;
 
-	if(data.user_id) {
-		var req = await request("GET", "/users/"+data.user_id)
+	if (data.user_id) {
+		var req = await request("GET", "/users/" + data.user_id)
 		d.executor = createUser(req);
 	}
 
-	if(data.target_id) {
-		var req = await request("GET", "/users/"+data.target_id)
+	if (data.target_id) {
+		var req = await request("GET", "/users/" + data.target_id)
 		d.target = createUser(req);
 	}
 
 	d.action = actions[data.action_type];
-	
+
 	d.changes = data.changes;
 
 	return d;

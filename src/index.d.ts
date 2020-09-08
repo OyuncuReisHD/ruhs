@@ -163,7 +163,7 @@ declare namespace Ruhs {
     author?: EmbedAuthor;
     fields: EmbedField[];
   }
-  
+
   interface VoiceState {
     guild?: Guild;
     member?: Member;
@@ -228,7 +228,7 @@ declare namespace Ruhs {
     filter: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => boolean)) => ReturnType<CollectionType<V | unknown>>);
     forEach: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => void)) => Promise<void> | void);
   });
-  
+
   type WebhookContent = string | ({
     username?: string;
     avatarl_url?: string;
@@ -296,16 +296,17 @@ declare namespace Ruhs {
     position?: number;
     positionOverwrites?: unknown; // permission overwrite structure
     name?: string;
-    topic?: string;
+    topic?: string | null;
     nsfw?: boolean;
+    lastMessageID?: string | null;
     bitrate?: boolean;
     userLimit?: number;
     rateLimitPerUser?: number;
     recipients?: User[];
-    parentID: string | null;
+    parentID?: string | null;
   }
 
-  const addChannel: ((guildID: string, roleData: any) => Promise<Channel>);
+  const createChannel: ((guildID: string, roleData: any) => Promise<Channel>);
   const deleteChannel: ((guildID: string, roleData: any) => Promise<void>);
 
   /* </Channel> */
@@ -334,7 +335,7 @@ declare namespace Ruhs {
     mentionable: boolean;
   }
 
-  const addRole: ((guildID: string, roleData: any) => Promise<Role>);
+  const createRole: ((guildID: string, roleData: any) => Promise<Role>);
   const deleteRole: ((guildID: string, roleID: string) => Promise<Role>);
 
   /* </Role> */
@@ -345,10 +346,13 @@ declare namespace Ruhs {
   /* <Reaction> */
 
   interface Reaction {
+    emoji?: Emoji;
     count: string;
     me: boolean;
-    emoji: Emoji;
   }
+
+  const createReaction: ((channelID: string, messageID: string, emoji: string) => Promise<Reaction>);
+  const deleteReaction: ((channelID: string, messageID, emoji: string, userID?: string) => Promise<void>);
 
   /* </Reaction> */
   /* </Reaction> */
@@ -444,8 +448,12 @@ declare namespace Ruhs {
 
     guildCreate?: ((guild: Guild) => Promise<void> | void);
     guildCache?: ((guild: Guild) => Promise<void> | void);
+
     guildMemberAdd?: ((member: Member, guild: Guild) => Promise<void> | void);
     guildMemberRemove?: ((member: Member, guild: Guild) => Promise<void> | void);
+    guildMemberUpdate?: ((oldMember: Member, newMember: Member, guild: Guild) => Promise<void> | void);
+    kickMember?: ((member: Member, guild: Guild) => Promise<void> | void);
+    banMember?: ((member: Member, guild: Guild) => Promise<void> | void);
 
     messageCreate?: ((message: Message) => Promise<void> | void);
     messageUpdate?: ((message: Message) => Promise<void> | void);

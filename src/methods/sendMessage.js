@@ -1,11 +1,10 @@
-const request = require("../utils/request.js");
-
-const createMessage = require("../structures/createMessage.js");
-
 const sendMessage = (async (channelID, data) => {
+  const request = require("../utils/request.js");
+  const newMessage = require("../structures/newMessage.js");
+
   let message;
 
-  if(typeof data === "object") {
+  if (typeof data === "object") {
     message = await request("POST", "/channels/" + channelID + "/messages", {
       "content": data.content,
       "embed": data.embed || null,
@@ -17,7 +16,7 @@ const sendMessage = (async (channelID, data) => {
     });
   }
 
-  return await createMessage(message);
+  return await newMessage(message);
 });
 
 module.exports = sendMessage;

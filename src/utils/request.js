@@ -1,7 +1,7 @@
 const axios = require("axios");
-const {botInfo} = require("../botProperties.js");
+const { botInfo } = require("../botProperties.js");
 
-const request = (async(method, path, requestData) => {
+const request = (async (method, path, requestData) => {
   return new Promise((resolve) => {
     axios({
       "url": "https://discord.com/api/v6" + path,
@@ -13,12 +13,16 @@ const request = (async(method, path, requestData) => {
         "User-Agent": "DiscordBot (https://github.com/acarnd03/ruhs, 0.0.1)",
         "X-Audit-Log-Reason": requestData ? encodeURIComponent(requestData.reason) : ""
       }
-    }).then(({data}) => {
+    }).then(({ data }) => {
       resolve(data);
-    }).catch(({response}) => {
-      setTimeout(async() => {
-        await request(method, path, requestData);
-      }, response.data.retry_after)
+    }).catch((error) => {
+      if (error.response && error.response.data && error.response.data.retry_after) {
+        setTimeout(async () => {
+          await request(method, path, requestData);
+        }, error.response.data.retry_after);
+      } else {
+        throw new Error(error);
+      }
     });
   });
 });

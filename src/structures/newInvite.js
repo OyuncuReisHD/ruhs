@@ -1,18 +1,17 @@
-const createInvite = ((inviteData) => {
-  const {cache} = require("../botProperties.js");
-  const request = require("../utils/request.js")
-  const createUser = require("./createUser.js");
+const newInvite = ((inviteData) => {
+  const { cache } = require("../botProperties.js");
+  const newMember = require("./newUser.js");
 
   const invite = {};
 
   invite.code = inviteData.code;
 
-  if(invite.guild) {
+  if (invite.guild) {
     invite.guild = cache.guilds.get(inviteData.guild.id);
   }
 
-  if(invite.inviter) {
-    invite.inviter = createUser(inviteData.inviter);
+  if (invite.inviter) {
+    invite.inviter = newMember(inviteData.inviter);
   }
 
   invite.channel = cache.channels.get(inviteData.channel.id);
@@ -26,4 +25,4 @@ const createInvite = ((inviteData) => {
   return invite;
 });
 
-module.exports = createInvite;
+module.exports = newInvite;
