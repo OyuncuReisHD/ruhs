@@ -3,7 +3,7 @@ const getPinnedMessages = (async (channelID) => {
   const Collection = require("../utils/Collection.js");
 
   const pinnedMessagesResult = await request("GET", `/channels/${channelID}/pins`);
-  const pinnedMessages = Collection(pinnedMessagesResult, "id");
+  const pinnedMessages = new Collection(pinnedMessagesResult, "id");
 
   return pinnedMessages;
 });

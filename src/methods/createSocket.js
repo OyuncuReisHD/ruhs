@@ -152,7 +152,7 @@ const createSocket = (async (token, clientOptions) => {
         await eventHandlers.rawWS(wsData);
       }
       if (wsData.t === "READY") {
-        cache.guilds = Collection(wsData.d.guilds, "id");
+        cache.guilds = new Collection(wsData.d.guilds, "id");
         botInfo.id = wsData.d.user.id;
 
         if (eventHandlers.ready) {
@@ -172,7 +172,7 @@ const createSocket = (async (token, clientOptions) => {
 
           cache.guilds.set(wsData.d.id, guild);
 
-          if (eventHandlers.guildnew) {
+          if (eventHandlers.guildCreate) {
             await eventHandlers.guildCreate(guild);
           }
         }
@@ -244,8 +244,15 @@ const createSocket = (async (token, clientOptions) => {
         }
       } else if (wsData.t === "PRESENCE_UPDATE") {
         if (eventHandlers.presenceUpdate) {
-          const presence = await newPresence(wsData.d);
-          await eventHandlers.presenceUpdate(presence);
+          const randomGuild = cache.guilds.random();
+          const oldPresence = randomGuild.members.get(wsData.d.user.id).user.presence;
+          const _newPresence = await newPresence(wsData.d);
+
+          cache.guilds.forEach((guild) => {
+            guild.members.set(wsData.d.user.id, Object.assign({}, _newPresence, guild.members.get(wsData.d.user.id)));
+          });
+
+          await eventHandlers.presenceUpdate(oldPresence, _newPresence, randomGuild.members.get(wsData.d.user.id).user);
         }
       } else if (wsData.t === "CHANNEL_CREATE") {
         const channel = await newChannel(wsData.d);
@@ -265,7 +272,7 @@ const createSocket = (async (token, clientOptions) => {
         const _newChannel = await newChannel(wsData.d);
         const oldChannel = cache.channels.get(wsData.d.id);
 
-        cache.channels.set(newChannel.id, _newChannel);
+        cache.channels.set(_newChannel.id, _newChannel);
 
         if (eventHandlers.channelUpdate) {
           await eventHandlers.channelUpdate(oldChannel, _newChannel)

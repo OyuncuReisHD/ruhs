@@ -10,7 +10,11 @@ const newGuild = (async (guildData) => {
 
   const guild = {};
 
-  const members = Collection();
+  const members = new Collection();
+  const defaultPresence = newPresence({
+    "status": "offline",
+    "client_status": {}
+  });
 
   guildData.members.forEach((memberData) => {
     if (guildData.members.filter((value) => value.id === memberData.id).size !== 1) {
@@ -69,8 +73,8 @@ const newGuild = (async (guildData) => {
   guild.verificationLevel = guildData.verification_level;
   guild.defaultMessageNotifications = guildData.default_message_notifications;
   guild.explicitContentFilter = guildData.explicit_content_filter;
-  guild.roles = Collection(guildData.roles.map((roleData) => newRole(roleData)), "owner_id");
-  guild.emojis = Collection(guildData.emojis.map((emojiData) => newEmoji(emojiData)), "owner_id");
+  guild.roles = new Collection(guildData.roles.map((roleData) => newRole(roleData)), "owner_id");
+  guild.emojis = new Collection(guildData.emojis.map((emojiData) => newEmoji(emojiData)), "owner_id");
   guild.features = guildData.features;
   guild.mfaLevel = guildData.mfa_level;
   guild.widgetEnabled = !!guildData.widget_enabled;
@@ -99,17 +103,22 @@ const newGuild = (async (guildData) => {
     cache.channels.set(guildData.channels[i].id, newChannel(guildData.channels[i]));
   }
 
-  const presences = [];
+  guildData.presences.forEach((presenceData) => {
+    const presence = newPresence(presenceData);
+    const member = members.get(presenceData.user.id);
 
-  guildData.presences.forEach((p) => {
-    const presence = newPresence(p);
-    presence.user = members.get(p.user.id).user;
-    presences.push(presence);
+    member.user.presence = presence;
 
-    members.set(presence.user.id, Object.assign({}, presence, members.get(presence.user.id)));
+    members.set(presenceData.user.id, member);
   });
 
-  guild.presences = presences;
+  members.forEach((member) => {
+    if (!member.user.presence) {
+      member.user.presence = defaultPresence;
+
+      members.set(member.user.id, member);
+    }
+  });
 
   guild.members = members;
 

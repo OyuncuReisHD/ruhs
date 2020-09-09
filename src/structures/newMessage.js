@@ -67,15 +67,15 @@ const newMessage = (async (messageData) => {
   message.mentionedEveryone = messageData.mention_everyone;
 
   if (messageData.mentions) {
-    message.mentions = Collection(messageData.mentions.map((mentionData) => mentionData.member ? newMember(assingMemberUser(mentionData)) : newUser(mentionData)), "id");
+    message.mentions = new Collection(messageData.mentions.map((mentionData) => mentionData.member ? newMember(assingMemberUser(mentionData)) : newUser(mentionData)), "id");
   }
 
   if (messageData.mention_roles) {
-    message.rolesMentions = Collection(messageData.mention_roles.map((roleData) => newRole(roleData)), "id");
+    message.rolesMentions = new Collection(messageData.mention_roles.map((roleData) => newRole(roleData)), "id");
   }
 
   if (messageData.mention_channels) {
-    message.channelsMentions = Collection(messageData.mention_channels.map((channelData) => newChannel(channelData)), "id");
+    message.channelsMentions = new Collection(messageData.mention_channels.map((channelData) => newChannel(channelData)), "id");
   }
 
   message.attachments = messageData.attachments; // attachment structure

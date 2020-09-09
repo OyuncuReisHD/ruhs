@@ -43,8 +43,8 @@ declare namespace Ruhs {
     verificationLevel: number;
     defaultMessageNotifications: number;
     explicitContentFilter: number;
-    roles: ReturnType<CollectionType<Role>>;
-    emojis: ReturnType<CollectionType<Emoji>>;
+    roles: Collection<Role>;
+    emojis: Collection<Emoji>;
     features: unknown; // feature structure
     mfaLevel: number;
     widgetEnabled: boolean;
@@ -55,7 +55,7 @@ declare namespace Ruhs {
     joinedAt: Date;
     large: boolean;
     unavailable: boolean;
-    members: ReturnType<CollectionType<Member>>;
+    members: Collection<Member>;
     voiceStates: unknown; // voice state structure
     memberCount: number;
     channels: string[];
@@ -93,9 +93,7 @@ declare namespace Ruhs {
   }
 
   interface Presence {
-    roles: string[];
     game: Activity;
-    guildID: string;
     status: PresenceStatuses;
     activities: Activity[];
     clientStatus: {
@@ -103,7 +101,6 @@ declare namespace Ruhs {
       mobile: boolean;
       web: boolean;
     };
-    member: Member;
   }
 
 
@@ -213,22 +210,6 @@ declare namespace Ruhs {
     "GUILD_MESSAGES" | "GUILD_MESSAGE_REACTIONS" | "GUILD_MESSAGE_TYPING" |
     "DIRECT_MESSAGES" | "DIRECT_MESSAGE_REACTIONS" | "DIRECT_MESSAGE_TYPING";
 
-  type CollectionType<V> = ((collectionData: V[], key?: string) => {
-    has: ((key: string) => boolean);
-    get: ((key: string) => V | undefined);
-    set: ((key: string, value: unknown) => void);
-    delete: ((key: string) => void);
-    array: (() => V[] | undefined);
-    keys: (() => string[]);
-    entries: (() => [string, V | unknown][]);
-    first: (() => V | unknown);
-    last: (() => V | unknown);
-    size: (() => number);
-    map: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => unknown)) => ReturnType<CollectionType<V | unknown>>);
-    filter: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => boolean)) => ReturnType<CollectionType<V | unknown>>);
-    forEach: ((callbackFn: ((value: V | unknown, index: number, array: (V | unknown)[]) => void)) => Promise<void> | void);
-  });
-
   type WebhookContent = string | ({
     username?: string;
     avatarl_url?: string;
@@ -268,8 +249,23 @@ declare namespace Ruhs {
 
 
 
+  class Collection<K, V> extends Map<K, V> {
+    constructor(data: V[], key?: string);
+    has: ((key: string) => boolean);
+    get: ((key: string) => V | undefined);
+    set: ((key: string, value: unknown) => void);
+    delete: ((key: string) => void);
+    array: (() => V[] | undefined);
+    keys: (() => string[]);
+    entries: (() => [string, V | unknown][]);
+    first: (() => V | unknown);
+    last: (() => V | unknown);
+    size: (() => number);
+    map: ((callbackFn: ((value: V | unknown, key: string, index: number, array: (V | unknown)[]) => unknown)) => Collection<V | unknown>);
+    filter: ((callbackFn: ((value: V | unknown, key: string, index: number, array: (V | unknown)[]) => boolean)) => Collection<V | unknown>);
+    forEach: ((callbackFn: ((value: V | unknown, key: string, index: number, array: (V | unknown)[]) => void)) => Promise<void> | void);
+  }
 
-  const Collection: CollectionType<unknown>;
   const request: ((method: HTTPMethods, path: string, requestData?: object) => Promise<unknown>);
 
 
@@ -371,7 +367,7 @@ declare namespace Ruhs {
     createdAt: Date;
   }
 
-  const getInvites: ((guildID: string) => Promise<ReturnType<CollectionType<Invite>>>);
+  const getInvites: ((guildID: string) => Promise<Collection<Invite>>);
 
   /* </Invite> */
   /* </Invite> */
@@ -405,9 +401,9 @@ declare namespace Ruhs {
     editedAt?: Date;
     tts: boolean;
     mentionedEveryone: boolean;
-    mentions?: ReturnType<CollectionType<(Member | User)>>;
-    rolesMentions?: ReturnType<CollectionType<Role>>;
-    channelMentions?: ReturnType<CollectionType<Channel>>;
+    mentions?: Collection<(Member | User)>;
+    rolesMentions?: Collection<Role>;
+    channelMentions?: Collection<Channel>;
     attachments: unknown; // attachment structure
     embeds: EmbedType[];
     reactions: Reaction[];
@@ -419,7 +415,7 @@ declare namespace Ruhs {
   const deleteMessage: ((channelID: string, messageID: string) => Promise<void>);
   const editMessage: ((channelID: string, messageID: string, data: MessageContent) => Promise<Message>);
   const sendMessage: ((channelID: string, data: MessageContent) => Promise<Message>);
-  const getPinnedMessages: ((channelID: string) => Promise<ReturnType<CollectionType<Channel>>>);
+  const getPinnedMessages: ((channelID: string) => Promise<Collection<Channel>>);
   const pinMessage: ((channelID: string, messageID: string) => Promise<void>);
   const unpinMessage: ((channelID: string, messageID: string) => Promise<void>);
 
@@ -432,8 +428,8 @@ declare namespace Ruhs {
   const sendWithWebhook: ((webhookID: string, webhookToken: string, data: WebhookContent) => Promise<Message>);
 
   const cache: ({
-    guilds: ReturnType<CollectionType<Guild>>,
-    channels: ReturnType<CollectionType<Channel>>
+    guilds: Collection<Guild>,
+    channels: Collection<Channel>
   });
 
   const botInfo: ({
@@ -458,7 +454,7 @@ declare namespace Ruhs {
     messageCreate?: ((message: Message) => Promise<void> | void);
     messageUpdate?: ((message: Message) => Promise<void> | void);
 
-    presenceUpdate?: ((presence: Presence) => Promise<void> | void);
+    presenceUpdate?: ((oldPresence: Presence, newPresence: Presence, user: User) => Promise<void> | void);
     voiceStateUpdate?: ((voiceState: VoiceState) => Promise<void> | void);
 
     channelCreate?: ((channel: Channel) => Promise<void> | void);

@@ -5,7 +5,7 @@ const getInvites = (async (guildID) => {
 
   const invites = await request("GET", `/guilds/${guildID}/invites`);
 
-  return Collection(invites.map((inviteData) => createInvite(inviteData, guildID)), "code");
+  return new Collection(invites.map((inviteData) => createInvite(inviteData, guildID)), "code");
 });
 
 module.exports = getInvites;

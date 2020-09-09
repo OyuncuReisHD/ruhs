@@ -1,8 +1,8 @@
 const Collection = require("./utils/Collection.js");
 
 const cache = ({
-  "guilds": Collection(),
-  "channels": Collection()
+  "guilds": new Collection(),
+  "channels": new Collection()
 });
 
 const botInfo = ({
